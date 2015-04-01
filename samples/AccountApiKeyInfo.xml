@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<eveapi version="2">
+  <currentTime>2015-04-01 05:06:59</currentTime>
+  <result>
+    <key accessMask="268435455" type="Account" expires="">
+      <rowset name="characters" key="characterID" columns="characterID,characterName,corporationID,corporationName,allianceID,allianceName,factionID,factionName">
+        <row characterID="91543956" characterName="Bud Tooper" corporationID="561395926" corporationName="The Suicide Kings" allianceID="99001861" allianceName="Black Legion." factionID="0" factionName="" />
+        <row characterID="93772629" characterName="Fab Tooper" corporationID="1000167" corporationName="State War Academy" allianceID="0" allianceName="" factionID="0" factionName="" />
+      </rowset>
+    </key>
+  </result>
+  <cachedUntil>2015-04-01 05:11:59</cachedUntil>
+</eveapi>

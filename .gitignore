@@ -86,3 +86,5 @@ crashlytics.properties
 crashlytics-build.properties
 
 
+
+request_cache.bin
