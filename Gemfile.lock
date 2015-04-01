@@ -1,12 +1,15 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    badgerfish (0.2.0)
+      htmlentities
+      ox (>= 2.1.1)
     diff-lcs (1.2.5)
-    eve_tooper (0.0.1)
-      nokogiri (~> 1.6)
+    htmlentities (4.3.3)
     mini_portile (0.6.2)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
+    ox (2.1.8)
     rspec (3.2.0)
       rspec-core (~> 3.2.0)
       rspec-expectations (~> 3.2.0)
@@ -26,7 +29,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  eve_tooper
+  badgerfish
   nokogiri
   rspec
   slowweb

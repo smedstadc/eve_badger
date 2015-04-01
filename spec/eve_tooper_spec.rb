@@ -11,14 +11,14 @@ describe EveTooper do
   end
 
   it "should get api key info" do
-    xml = @key.account_api_key_info
-    expect(xml[:key_info][:type]).to eq("FOO")
+    response = @key.account_api_key_info
+    expect(response['key']['@type']).to eq('Account')
   end
 
   it "should get characters list" do
-    xml = @key.account_characters
-    xml[:rowset].each do |row|
-      expect(row[:name]).to_not be_nil
+    response = @key.account_characters
+    response['rowset']['row'].each do |row|
+      expect(row['@name']).to_not be_nil
     end
   end
 end
