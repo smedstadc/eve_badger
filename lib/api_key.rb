@@ -8,16 +8,16 @@ module EveTooper
     end
 
     def account_api_key_info
-      extract_hash from: endpoint('/account/APIKeyInfo.xml.aspx')
+      extract_hash from: request('account/APIKeyInfo')
     end
 
     def account_characters
-      extract_hash from: endpoint('/Account/Characters.xml.aspx')
+      extract_hash from: request('Account/Characters')
     end
 
     private
-    def endpoint(path)
-      EveTooper.get_response "#{EveTooper::DOMAIN}#{path}#{params}"
+    def request(path)
+      EveTooper.get_response "#{EveTooper::DOMAIN}#{path}.xml.aspx#{params}"
     end
 
     def params

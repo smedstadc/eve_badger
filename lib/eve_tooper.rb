@@ -3,11 +3,12 @@ require 'open-uri'
 require 'slowweb'
 require 'time'
 require 'badgerfish'
+require 'json'
 require 'api_key'
 
 module EveTooper
   VERSION = '0.0.1'
-  DOMAIN = 'https://api.eveonline.com'
+  DOMAIN = 'https://api.eveonline.com/'
   USER_AGENT = "EveTooper-#{EveTooper::VERSION}/Ruby-#{RUBY_VERSION}"
   CACHE_FILE_PATH = 'request_cache.bin'
   PARSER = Badgerfish::Parser.new
