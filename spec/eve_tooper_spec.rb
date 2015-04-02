@@ -1,14 +1,17 @@
 require 'spec_helper'
 
 describe EveTooper do
-  before(:each) do
-    @key = EveTooper::APIKey.new(keyid: 2641361, vcode: 'H7MGidb2MB7MzqPvqOOz7RtdjEyY4dHTP8u8Ojf7ywUOQ7MC8RQFRvSDQuFaX02R')
+  before(:all) do
+    @eve = EveTooper::EveApi(server: :tq)
+    @key = EveTooper::AccountKey.new(keyid: 2641361, vcode: 'H7MGidb2MB7MzqPvqOOz7RtdjEyY4dHTP8u8Ojf7ywUOQ7MC8RQFRvSDQuFaX02R')
   end
 
-  it "should initialize APIKey objects properly" do
+  it "should make APIKey objects with keyid and vcode" do
     expect(@key.keyid).to eq('2641361')
     expect(@key.vcode).to eq('H7MGidb2MB7MzqPvqOOz7RtdjEyY4dHTP8u8Ojf7ywUOQ7MC8RQFRvSDQuFaX02R')
   end
+
+  it "should make AccountAPIKey objects with"
 
   it "should get api key info" do
     response = @key.account_api_key_info
@@ -22,7 +25,7 @@ describe EveTooper do
     end
   end
 
-  it "should load endpoints from json" do
+  it "should load endpoints data json" do
     acct_info = EveTooper.account_endpoint(:api_key_info)
     char_info = EveTooper.character_endpoint(:account_balance)
     expect(acct_info[:path]).to_not be_nil
