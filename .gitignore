@@ -89,3 +89,4 @@ crashlytics-build.properties
 
 cache/request_cache.bin
 lib/scratch.rb
+samples/
