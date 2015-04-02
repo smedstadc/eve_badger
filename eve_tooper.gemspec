@@ -1,8 +1,8 @@
-require './lib/eve_tooper'
+require './lib/eve_badger'
 Gem::Specification.new do |gemspec|
-  gemspec.name = 'eve_tooper'
-  gemspec.version = EveTooper::VERSION
-  gemspec.summary = 'A gem for interacting with the Eve: Online API.'
+  gemspec.name = 'eve_badger'
+  gemspec.version = '0.0.1'
+  gemspec.summary = 'A gem that interacts with the Eve: Online API and provides re.'
   gemspec.authors = 'Corey Smedstad'
   gemspec.license = 'MIT'
   gemspec.files = Dir['lib/**/*.rb'] + Dir['json/**/*.json']
