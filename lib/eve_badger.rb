@@ -47,6 +47,7 @@ module EveBadger
     end
 
     def account(endpoint_name)
+      raise "missing required key_id or vcode" unless @key_id && @vcode
       endpoint = @@account_endpoint[endpoint_name.to_sym].dup
       uri = build_uri endpoint
       response = get_response uri
@@ -54,6 +55,7 @@ module EveBadger
     end
 
     def character(endpoint_name)
+      raise "missing required character_id key_id or_vcode" unless @character_id && @key_id && @vcode
       endpoint = @@character_endpoint[endpoint_name.to_sym].dup
       uri = build_uri endpoint
       response = get_response uri
@@ -103,6 +105,7 @@ module EveBadger
     end
 
     def badgerfish_from(xml)
+      # handle case when response 404s or has "//error" instead
       response = Nokogiri::XML(xml)
       @parser.load(response.xpath("//result/*").to_s)
     end
