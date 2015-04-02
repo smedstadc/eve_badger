@@ -54,7 +54,7 @@ module EveBadger
     end
 
     def character(endpoint_name)
-      endpoint = @character_endpoint[endpoint_name.to_sym].dup
+      endpoint = @@character_endpoint[endpoint_name.to_sym].dup
       uri = build_uri endpoint
       response = get_response uri
       badgerfish_from response
@@ -72,7 +72,7 @@ module EveBadger
     end
 
     def params
-      if @characterid
+      if @character_id
         "?keyid=#{@key_id}&vcode=#{@vcode}&characterid=#{@character_id}"
       else
         "?keyid=#{@key_id}&vcode=#{@vcode}"
@@ -85,10 +85,8 @@ module EveBadger
       end
 
       if Time.now > Time.parse(@xml.xpath('//cachedUntil').first.content)
-        puts "HTTP #{uri}"
         http_get(uri)
       else
-        puts "CACHE #{uri}"
         cache_get(uri)
       end
     end
