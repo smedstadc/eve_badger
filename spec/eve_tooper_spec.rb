@@ -21,5 +21,12 @@ describe EveTooper do
       expect(row['@name']).to_not be_nil
     end
   end
+
+  it "should load endpoints from json" do
+    acct_info = EveTooper.account_endpoint(:api_key_info)
+    char_info = EveTooper.character_endpoint(:account_balance)
+    expect(acct_info[:path]).to_not be_nil
+    expect(char_info[:path]).to_not be_nil
+  end
 end
 
