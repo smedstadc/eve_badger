@@ -129,9 +129,9 @@ module EveBadger
 
     def badgerfish_from(xml)
       response = Nokogiri::XML(xml)
-      # if response.xpath("//error")
-      #   raise "#{response.to_s}"
-      # end
+      if response.xpath("//error").any?
+        raise "#{response.xpath("//error").first}"
+      end
       @parser.load(response.xpath("//result/*").to_s)
     end
   end
