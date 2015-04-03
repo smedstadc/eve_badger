@@ -1,0 +1,126 @@
+{
+  "account_balance": {
+    "path": "Corp/AccountBalance",
+    "access_mask": 1
+  },
+  "asset_list": {
+    "path": "Corp/AssetList",
+    "access_mask": 2
+  },
+  "blueprints": {
+    "path": "Corp/Blueprints",
+    "access_mask": 2
+  },  
+  "contact_list": {
+    "path": "Corp/ContactList",
+    "access_mask": 16
+  },
+  "container_log": {
+    "path": "Corp/ContainerLog",
+    "access_mask": 32
+  },
+  "contracts": {
+    "path": "Corp/Contracts",
+    "access_mask": 8388608
+  },
+  "contract_items": {
+    "path": "Corp/ContractItems",
+    "access_mask": 8388608
+  },
+  "contract_bids": {
+    "path": "Corp/ContractBids",
+    "access_mask": 8388608
+  },
+  "corporation_sheet": {
+    "path": "Corp/CorporationSheet",
+    "access_mask": 8
+  },
+  "customs_offices": {
+    "path": "Corp/CustomsOffices",
+    "access_mask": 2
+  },
+  "facilities": {
+    "path": "Corp/Facilities",
+    "access_mask": 128
+  },
+  "factional_warfare_stats": {
+    "path": "Corp/FacWarStats",
+    "access_mask": 64
+  },
+  "industry_jobs": {
+    "path": "Corp/IndustryJobs",
+    "access_mask": 128
+  },
+  "industry_jobs_history": {
+    "path": "Corp/IndustryJobsHistory",
+    "access_mask": 128
+  },
+  "kill_mails": {
+    "path": "Corp/KillMails",
+    "access_mask": 256
+  },
+  "locations": {
+    "path": "Corp/Locations",
+    "access_mask": 16777216
+  },
+  "market_orders": {
+    "path": "Corp/MarketOrders",
+    "access_mask": 4096
+  },
+  "medals": {
+    "path": "Corp/Medals",
+    "access_mask": 8192
+  },
+  "member_medals": {
+    "path": "Corp/MemberMedals",
+    "access_mask": 4
+  },
+  "member_security": {
+    "path": "Corp/MemberSecurity",
+    "access_mask": 512
+  },
+  "member_security_log": {
+    "path": "Corp/MemberSecurityLog",
+    "access_mask": 1024
+  },
+  "member_tracking": {
+    "path": "Corp/MemberTracking",
+    "access_mask": 2048
+  },
+  "outpost_list": {
+    "path": "Corp/OutpostList",
+    "access_mask": 16384
+  },
+  "outpost_service_detail": {
+    "path": "Corp/OutpostServiceDetail",
+    "access_mask": 32768
+  },
+  "shareholders": {
+    "path": "Corp/Shareholders",
+    "access_mask": 65536
+  },
+  "standings": {
+    "path": "Corp/Standings",
+    "access_mask": 262144
+  },
+  "starbase_details": {
+    "path": "Corp/StarbaseDetail",
+    "access_mask": 131072
+  },
+  "starbase_list": {
+    "path": "Corp/StarbaseList",
+    "access_mask": 524288
+  },
+  "titles": {
+    "path": "Corp/Titles",
+    "access_mask": 4194304
+  },
+  "wallet_journal": {
+    "path": "Corp/WalletJournal",
+    "access_mask": 1048576
+  },
+  "wallet_transactions": {
+    "path": "Corp/WalletTransactions",
+    "access_mask": 2097152
+  }
+}

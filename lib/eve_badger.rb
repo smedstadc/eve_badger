@@ -13,6 +13,8 @@ module EveBadger
   CACHE_FILE = './cache/request_cache.bin'
   ACCOUNT_ENDPOINTS_JSON = './json/account_endpoints.json'
   CHARACTER_ENDPOINTS_JSON = './json/character_endpoints.json'
+  CORPORATION_ENDPOINTS_JSON = './json/corporation_endpoints.json'
+  DETAIL_ENDPOINTS_JSON = './json/detail_endpoints.json'
 
   # According to CCP the default limit for API access is 30 requests per minute.
   # TODO: Allow this to be changed by people who've made arrangements for higher caps.
@@ -34,6 +36,14 @@ module EveBadger
 
     open(CHARACTER_ENDPOINTS_JSON, 'r') do |file|
       @@character_endpoint = JSON.parse(file.read.to_s, :symbolize_names => true)
+    end
+
+    open(CORPORATION_ENDPOINTS_JSON, 'r') do |file|
+      @@corporation_endpoint = JSON.parse(file.read.to_s, :symbolize_names => true)
+    end
+
+    open(DETAIL_ENDPOINTS_JSON, 'r') do |file|
+      @@detail_endpoint = JSON.parse(file.read.to_s, :symbolize_names => true)
     end
 
     def initialize(args={})
@@ -60,6 +70,19 @@ module EveBadger
       uri = build_uri endpoint
       response = get_response uri
       badgerfish_from response
+    end
+
+    def corporation(endpoint_name)
+      raise "missing required character_id key_id or_vcode" unless @character_id && @key_id && @vcode
+      endpoint = @@character_endpoint[endpoint_name.to_sym].dup
+      uri = build_uri endpoint
+      response = get_response uri
+      badgerfish_from response
+    end
+
+    def details(endpoint_name)
+      # for access to the few endpoints that require parameters in excess of key_id, vcode and character_id
+      raise "unimplemented"
     end
 
     def dump_cache
@@ -105,14 +128,13 @@ module EveBadger
     end
 
     def badgerfish_from(xml)
-      # handle case when response 404s or has "//error" instead
       response = Nokogiri::XML(xml)
+      # if response.xpath("//error")
+      #   raise "#{response.to_s}"
+      # end
       @parser.load(response.xpath("//result/*").to_s)
     end
   end
 end
-
-
-
 
 
