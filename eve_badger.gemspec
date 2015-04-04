@@ -5,7 +5,7 @@ Gem::Specification.new do |gemspec|
   gemspec.summary = 'A gem for interacting with the Eve: Online API.'
   gemspec.authors = 'Corey Smedstad'
   gemspec.license = 'MIT'
-  gemspec.files = Dir['lib/**/*.rb'] + Dir['json/**/*.json']
+  gemspec.files = Dir['lib/**/*.rb'] + Dir['json/**/*.json'] + Dir['VERSION']
   gemspec.required_ruby_version = '>= 1.9.3'
   gemspec.add_runtime_dependency 'nokogiri', '~> 1.6'
   gemspec.add_runtime_dependency 'badgerfish', '~> 0.2.0'

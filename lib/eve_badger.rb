@@ -6,15 +6,15 @@ require 'badgerfish'
 require 'json'
 
 module EveBadger
-  VERSION = open('VERSION', 'r').read
+  VERSION = File.read(File.expand_path(File.join(File.dirname(__FILE__), "..", 'VERSION')))
   USER_AGENT = "EveBadger-#{VERSION}/Ruby#{RUBY_VERSION}"
   TQ_API_DOMAIN = 'https://api.eveonline.com/'
   SISI_API_DOMAIN = 'https://api.testeveonline.com/'
-  CACHE_FILE = './cache/request_cache.bin'
-  ACCOUNT_ENDPOINTS_JSON = './json/account_endpoints.json'
-  CHARACTER_ENDPOINTS_JSON = './json/character_endpoints.json'
-  CORPORATION_ENDPOINTS_JSON = './json/corporation_endpoints.json'
-  DETAIL_ENDPOINTS_JSON = './json/detail_endpoints.json'
+  CACHE_FILE = File.expand_path(File.join(File.dirname(__FILE__), '..', 'cache', 'request_cache.bin'))
+  ACCOUNT_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'account_endpoints.json'))
+  CHARACTER_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'character_endpoints.json'))
+  CORPORATION_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'corporation_endpoints.json'))
+  DETAIL_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'detail_endpoints.json'))
 
   # According to CCP the default limit for API access is 30 requests per minute.
   # TODO: Allow this to be changed by people who've made arrangements for higher caps.
