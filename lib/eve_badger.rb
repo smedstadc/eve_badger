@@ -17,9 +17,23 @@ module EveBadger
   DETAIL_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'detail_endpoints.json'))
 
   # According to CCP the default limit for API access is 30 requests per minute.
-  # TODO: Allow this to be changed by people who've made arrangements for higher caps.
   SlowWeb.limit(TQ_API_DOMAIN, 30, 60)
   SlowWeb.limit(SISI_API_DOMAIN, 30, 60)
+
+  def self.disable_throttling
+    SlowWeb.reset
+  end
+
+  def self.enable_default_throttling
+    SlowWeb.limit(TQ_API_DOMAIN, 30, 60)
+    SlowWeb.limit(SISI_API_DOMAIN, 30, 60)
+  end
+
+  def self.enable_custom_throttling(requests_per_minute)
+    SlowWeb.reset
+    SlowWeb.limit(TQ_API_DOMAIN, requests_per_minute, 60)
+    SlowWeb.limit(SISI_API_DOMAIN, requests_per_minute, 60)
+  end
 
   class EveAPI
     attr_accessor :key_id, :vcode, :character_id, :access_mask, :user_agent
