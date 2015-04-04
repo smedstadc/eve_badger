@@ -31,10 +31,6 @@
     "path": "Char/Contracts",
     "access_mask": 67108864
   },
-  "contract_items": {
-    "path": "Char/ContractItems",
-    "access_mask": 67108864
-  },
   "contract_bids": {
     "path": "Char/ContractBids",
     "access_mask": 67108864

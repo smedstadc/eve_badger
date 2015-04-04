@@ -23,10 +23,6 @@
     "path": "Corp/Contracts",
     "access_mask": 8388608
   },
-  "contract_items": {
-    "path": "Corp/ContractItems",
-    "access_mask": 8388608
-  },
   "contract_bids": {
     "path": "Corp/ContractBids",
     "access_mask": 8388608
@@ -91,10 +87,6 @@
     "path": "Corp/OutpostList",
     "access_mask": 16384
   },
-  "outpost_service_detail": {
-    "path": "Corp/OutpostServiceDetail",
-    "access_mask": 32768
-  },
   "shareholders": {
     "path": "Corp/Shareholders",
     "access_mask": 65536
@@ -103,10 +95,6 @@
     "path": "Corp/Standings",
     "access_mask": 262144
   },
-  "starbase_details": {
-    "path": "Corp/StarbaseDetail",
-    "access_mask": 131072
-  },
   "starbase_list": {
     "path": "Corp/StarbaseList",
     "access_mask": 524288
@@ -114,10 +102,6 @@
   "titles": {
     "path": "Corp/Titles",
     "access_mask": 4194304
-  },
-  "wallet_journal": {
-    "path": "Corp/WalletJournal",
-    "access_mask": 1048576
   },
   "wallet_transactions": {
     "path": "Corp/WalletTransactions",

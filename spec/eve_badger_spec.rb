@@ -5,7 +5,8 @@ describe "EveBadger" do
     @api = EveBadger::EveAPI.new(server: :tq,
                                  key_id: 2641361,
                                  vcode: 'H7MGidb2MB7MzqPvqOOz7RtdjEyY4dHTP8u8Ojf7ywUOQ7MC8RQFRvSDQuFaX02R',
-                                 character_id: 91543956)
+                                 character_id: 91543956,
+    )
   end
 
   after(:all) do
@@ -42,7 +43,6 @@ describe "EveBadger" do
   it "account endpoints should raise when missing vcode" do
     @api.vcode = nil
     expect { @api.account(:api_key_info) }.to raise_exception
-
   end
 
   it "account endpoints should raise when missing key_id" do
@@ -80,9 +80,8 @@ describe "EveBadger" do
     expect { @api.corporation(:api_key_info) }.to raise_exception
   end
 
-  it "should report version" do
-    puts EveBadger::VERSION
-    expect(EveBadger::VERSION).to eq '0.0.1'
+  it "module namespace should have VERSION" do
+    expect(EveBadger::VERSION).to_not be_nil
   end
 end
 

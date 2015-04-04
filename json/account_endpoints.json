@@ -5,10 +5,10 @@
   },
   "api_key_info": {
     "path": "Account/APIKeyInfo",
-    "access_mask": null
+    "access_mask": 0
   },
   "list_of_characters": {
     "path": "Account/Characters",
-    "access_mask": null
+    "access_mask": 0
   }
 }

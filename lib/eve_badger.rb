@@ -22,7 +22,7 @@ module EveBadger
   SlowWeb.limit(SISI_API_DOMAIN, 30, 60)
 
   class EveAPI
-    attr_accessor :key_id, :vcode, :character_id, :access_mask
+    attr_accessor :key_id, :vcode, :character_id, :access_mask, :user_agent
 
     begin
       @@request_cache = Marshal.load(File.binread(CACHE_FILE))
@@ -46,6 +46,9 @@ module EveBadger
       @@detail_endpoint = JSON.parse(file.read.to_s, :symbolize_names => true)
     end
 
+    @@request_count = 0
+    @@cache_trim_interval = 100
+
     def initialize(args={})
       @domain = args[:sisi] ? SISI_API_DOMAIN : TQ_API_DOMAIN
       @user_agent = args[:user_agent] || USER_AGENT
@@ -58,31 +61,33 @@ module EveBadger
 
     def account(endpoint_name)
       raise "missing required key_id or vcode" unless @key_id && @vcode
-      endpoint = @@account_endpoint[endpoint_name.to_sym].dup
-      uri = build_uri endpoint
-      response = get_response uri
-      badgerfish_from response
+      endpoint = @@account_endpoint[endpoint_name.to_sym]
+      badgerfish_from api_request(endpoint)
     end
 
     def character(endpoint_name)
       raise "missing required character_id key_id or_vcode" unless @character_id && @key_id && @vcode
-      endpoint = @@character_endpoint[endpoint_name.to_sym].dup
-      uri = build_uri endpoint
-      response = get_response uri
-      badgerfish_from response
+      endpoint = @@character_endpoint[endpoint_name.to_sym]
+      badgerfish_from api_request(endpoint)
     end
 
     def corporation(endpoint_name)
       raise "missing required character_id key_id or_vcode" unless @character_id && @key_id && @vcode
-      endpoint = @@character_endpoint[endpoint_name.to_sym].dup
-      uri = build_uri endpoint
-      response = get_response uri
-      badgerfish_from response
+      endpoint = @@character_endpoint[endpoint_name.to_sym]
+      badgerfish_from api_request(endpoint)
     end
 
-    def details(endpoint_name, id_of_interest)
-      # for access to the few endpoints that require parameters in excess of key_id, vcode and character_id
-      raise "unimplemented"
+    def details(endpoint_name, id_of_interest, fromid=nil, rowcount=nil)
+      endpoint = @@detail_endpoint[endpoint_name.to_sym]
+      if endpoint_permitted?(endpoint)
+        uri = build_uri(endpoint)
+        uri << "&#{endpoint[:detail_id]}=#{id_of_interest}"
+        uri << "&fromID=#{fromid}" if fromid
+        uri << "&rowCount=#{rowcount}" if rowcount
+        badgerfish_from get_response(uri)
+      else
+        raise "#{endpoint[:path]} not permitted by access mask"
+      end
     end
 
     def dump_cache
@@ -92,8 +97,25 @@ module EveBadger
     end
 
     private
+    def get_access_mask
+      self.access_mask = account(:api_key_info)["key"]["@accessMask"].to_i
+    end
+
+    def api_request(endpoint)
+      EveAPI.trim_cache if EveAPI.trim?
+      if endpoint_permitted?(endpoint)
+        get_response(build_uri(endpoint))
+      else
+        raise "#{endpoint[:path]} not permitted by access mask"
+      end
+    end
+
+    def endpoint_permitted?(endpoint)
+      endpoint[:access_mask].zero? or (@access_mask % endpoint[:access_mask] != 0)
+    end
+
     def build_uri(endpoint)
-      @domain + endpoint[:path] + '.xml.aspx' + params
+      "#{@domain}#{endpoint[:path]}.xml.aspx#{params}"
     end
 
     def params
@@ -109,7 +131,7 @@ module EveBadger
         @xml = Nokogiri::XML(cache_get(uri))
       end
 
-      if Time.now > Time.parse(@xml.xpath('//cachedUntil').first.content)
+      if Time.now > Time.parse(@xml.xpath("//cachedUntil").first.content)
         http_get(uri)
       else
         cache_get(uri)
@@ -121,9 +143,7 @@ module EveBadger
     end
 
     def http_get(uri)
-      open(uri) do |res|
-        @@request_cache[uri] = res.read
-      end
+      @@request_cache[uri] = open(uri) { |res| res.read }
       @@request_cache[uri]
     end
 
@@ -135,10 +155,23 @@ module EveBadger
       @parser.load(response.xpath("//result/*").to_s)
     end
 
-    def get_access_mask
-      @access_mask = account(:api_key_info)["key"]["@accessMask"]
+    def self.trim?
+      @@request_count += 1
+      if @@request_count > @@cache_trim_interval
+        @@cache_trim_interval = 0
+        true
+      end
+    end
+
+    def self.trim_cache
+      @@request_cache.each do |key, value|
+        @@request_cache.delete(key) if cached_until_elapsed?(value)
+      end
+    end
+
+    def self.cached_until_elapsed?(xml)
+      noko = Nokogiri::XML(xml)
+      Time.now > Time.parse(noko.xpath("//cachedUntil").first.content)
     end
   end
 end
-
-
