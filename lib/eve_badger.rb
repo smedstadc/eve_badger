@@ -6,7 +6,7 @@ require 'badgerfish'
 require 'json'
 
 module EveBadger
-  VERSION = '0.0.1'
+  VERSION = open('VERSION', 'r').read
   USER_AGENT = "EveBadger-#{VERSION}/Ruby#{RUBY_VERSION}"
   TQ_API_DOMAIN = 'https://api.eveonline.com/'
   SISI_API_DOMAIN = 'https://api.testeveonline.com/'
@@ -21,8 +21,8 @@ module EveBadger
   SlowWeb.limit(TQ_API_DOMAIN, 30, 60)
   SlowWeb.limit(SISI_API_DOMAIN, 30, 60)
 
-  class EveApi
-    attr_accessor :key_id, :vcode, :character_id
+  class EveAPI
+    attr_accessor :key_id, :vcode, :character_id, :access_mask
 
     begin
       @@request_cache = Marshal.load(File.binread(CACHE_FILE))
@@ -47,13 +47,13 @@ module EveBadger
     end
 
     def initialize(args={})
-      @parser = Badgerfish::Parser.new
-      @user_agent = args[:user_agent] || USER_AGENT
       @domain = args[:sisi] ? SISI_API_DOMAIN : TQ_API_DOMAIN
+      @user_agent = args[:user_agent] || USER_AGENT
+      @parser = Badgerfish::Parser.new
       @key_id = args[:key_id].to_s
       @vcode = args[:vcode]
-      @access_mask = args[:access_mask]
       @character_id = args[:character_id].to_s
+      @access_mask = args[:access_mask] || get_access_mask
     end
 
     def account(endpoint_name)
@@ -80,7 +80,7 @@ module EveBadger
       badgerfish_from response
     end
 
-    def details(endpoint_name)
+    def details(endpoint_name, id_of_interest)
       # for access to the few endpoints that require parameters in excess of key_id, vcode and character_id
       raise "unimplemented"
     end
@@ -98,9 +98,9 @@ module EveBadger
 
     def params
       if @character_id
-        "?keyid=#{@key_id}&vcode=#{@vcode}&characterid=#{@character_id}"
+        "?keyID=#{@key_id}&vCode=#{@vcode}&characterID=#{@character_id}"
       else
-        "?keyid=#{@key_id}&vcode=#{@vcode}"
+        "?keyID=#{@key_id}&vCode=#{@vcode}"
       end
     end
 
@@ -133,6 +133,10 @@ module EveBadger
         raise "#{response.xpath("//error").first}"
       end
       @parser.load(response.xpath("//result/*").to_s)
+    end
+
+    def get_access_mask
+      @access_mask = account(:api_key_info)["key"]["@accessMask"]
     end
   end
 end

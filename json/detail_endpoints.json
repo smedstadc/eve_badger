@@ -1,1 +1,14 @@
-{}
+{
+  "starbase": {
+    "detail_id": "itemid"
+  },
+  "contract": {
+    "detail_id": "contractid"
+  },
+  "wallet_journal": {
+    "detail_id": "accountKey"
+  },
+  "outpost_service": {
+    "detail_id": "itemid"
+  }
+}
