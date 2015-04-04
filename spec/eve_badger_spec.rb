@@ -39,7 +39,7 @@ describe "EveBadger" do
 
   it "should get skill in training" do
     response = @api.character(:skill_in_training)
-    expect(response['currentTQTime']['$']).to_not be_nil
+    expect(response['trainingTypeID']['$']).to_not be_nil
   end
 
   it "account endpoints should raise when missing vcode" do
