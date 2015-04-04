@@ -56,7 +56,7 @@ module EveBadger
       @key_id = args[:key_id].to_s
       @vcode = args[:vcode]
       @character_id = args[:character_id].to_s
-      @access_mask = args[:access_mask] || get_access_mask
+      @access_mask = args[:access_mask]
     end
 
     def account(endpoint_name)
@@ -97,11 +97,8 @@ module EveBadger
     end
 
     private
-    def get_access_mask
-      self.access_mask = account(:api_key_info)["key"]["@accessMask"].to_i
-    end
-
     def api_request(endpoint)
+      @@request_count += 1
       EveAPI.trim_cache if EveAPI.trim?
       if endpoint_permitted?(endpoint)
         get_response(build_uri(endpoint))
@@ -110,8 +107,12 @@ module EveBadger
       end
     end
 
+    def get_access_mask
+      @access_mask ||= account(:api_key_info)["key"]["@accessMask"].to_i
+    end
+
     def endpoint_permitted?(endpoint)
-      endpoint[:access_mask].zero? or (@access_mask % endpoint[:access_mask] != 0)
+      endpoint[:access_mask].zero? or (get_access_mask % endpoint[:access_mask] != 0)
     end
 
     def build_uri(endpoint)
@@ -120,9 +121,7 @@ module EveBadger
 
     def params
       if @character_id
-        "?keyID=#{@key_id}&vCode=#{@vcode}&characterID=#{@character_id}"
-      else
-        "?keyID=#{@key_id}&vCode=#{@vcode}"
+        "?keyID=#{@key_id}&vCode=#{@vcode}#{"&characterID=" + @character_id if @character_id}"
       end
     end
 
@@ -156,7 +155,6 @@ module EveBadger
     end
 
     def self.trim?
-      @@request_count += 1
       if @@request_count > @@cache_trim_interval
         @@cache_trim_interval = 0
         true
@@ -172,6 +170,10 @@ module EveBadger
     def self.cached_until_elapsed?(xml)
       noko = Nokogiri::XML(xml)
       Time.now > Time.parse(noko.xpath("//cachedUntil").first.content)
+    end
+
+    def self.cache_trim_interval=(interval)
+      @@cache_trim_interval = interval.to_i
     end
   end
 end

@@ -20,6 +20,8 @@ describe "EveBadger" do
   end
 
   it "should get accessmask automatically when not explicitly provided" do
+    @api.access_mask = nil
+    result = @api.character(:blueprints)
     expect(@api.access_mask).to_not be_nil
   end
 
