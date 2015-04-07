@@ -9,10 +9,6 @@ describe "EveBadger" do
     )
   end
 
-  after(:all) do
-    @api.dump_cache
-  end
-
   it "should make EveAPI objects with keyid and vcode" do
     expect(@api.key_id).to eq('2641361')
     expect(@api.vcode).to eq('H7MGidb2MB7MzqPvqOOz7RtdjEyY4dHTP8u8Ojf7ywUOQ7MC8RQFRvSDQuFaX02R')
@@ -21,7 +17,7 @@ describe "EveBadger" do
 
   it "should get accessmask automatically when not explicitly provided" do
     @api.access_mask = nil
-    result = @api.character(:blueprints)
+    @api.character(:blueprints)
     expect(@api.access_mask).to_not be_nil
   end
 

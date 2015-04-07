@@ -4,13 +4,14 @@ require 'slowweb'
 require 'time'
 require 'badgerfish'
 require 'json'
+require 'moneta'
 
 module EveBadger
-  VERSION = File.read(File.expand_path(File.join(File.dirname(__FILE__), "..", 'VERSION')))
+  VERSION = File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', 'VERSION')))
   USER_AGENT = "EveBadger-#{VERSION}/Ruby#{RUBY_VERSION}"
   TQ_API_DOMAIN = 'https://api.eveonline.com/'
   SISI_API_DOMAIN = 'https://api.testeveonline.com/'
-  CACHE_FILE = File.expand_path(File.join(File.dirname(__FILE__), '..', 'cache', 'request_cache.bin'))
+  CACHE_FILE = File.expand_path(File.join(File.dirname(__FILE__), '..', 'cache', 'moneta'))
   ACCOUNT_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'account_endpoints.json'))
   CHARACTER_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'character_endpoints.json'))
   CORPORATION_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'corporation_endpoints.json'))
@@ -38,11 +39,7 @@ module EveBadger
   class EveAPI
     attr_accessor :key_id, :vcode, :character_id, :access_mask, :user_agent
 
-    begin
-      @@request_cache = Marshal.load(File.binread(CACHE_FILE))
-    rescue
-      @@request_cache = Hash.new
-    end
+    @@request_cache = Moneta.new(:Redis)
 
     open(ACCOUNT_ENDPOINTS_JSON, 'r') do |file|
       @@account_endpoint = JSON.parse(file.read.to_s, :symbolize_names => true)
@@ -104,16 +101,12 @@ module EveBadger
       end
     end
 
-    def dump_cache
-      File.open(CACHE_FILE, 'wb') do |f|
-        f.write Marshal.dump(@@request_cache)
-      end
+    def self.disable_request_cache
+      @@request_cache = nil
     end
 
     private
     def api_request(endpoint)
-      @@request_count += 1
-      EveAPI.trim_cache if EveAPI.trim?
       if endpoint_permitted?(endpoint)
         get_response(build_uri(endpoint))
       else
@@ -140,24 +133,33 @@ module EveBadger
     end
 
     def get_response(uri)
-      if cache_get(uri)
-        @xml = Nokogiri::XML(cache_get(uri))
-      end
-
-      if Time.now > Time.parse(@xml.xpath("//cachedUntil").first.content)
-        http_get(uri)
-      else
-        cache_get(uri)
-      end
+      cache_get(uri) || http_get(uri)
     end
 
     def cache_get(uri)
-      @@request_cache[uri] || http_get(uri)
+      if @@request_cache
+        @@request_cache[uri]
+      end
     end
 
     def http_get(uri)
-      @@request_cache[uri] = open(uri) { |res| res.read }
-      @@request_cache[uri]
+      begin
+        response = open(uri) { |res| res.read }
+      rescue OpenURI::HTTPError => error
+        raise "HTTPError during API request #{error}"
+      end
+      if @@request_cache
+        @@request_cache.store(uri, response, expires: seconds_until_expire(response))
+        @@request_cache[uri]
+      else
+        response
+      end
+    end
+
+    def seconds_until_expire(xml)
+      noko = Nokogiri::XML xml
+      cached_until = Time.parse(noko.xpath("//cachedUntil").first.content)
+      cached_until.to_i - Time.now.to_i
     end
 
     def badgerfish_from(xml)
@@ -166,28 +168,6 @@ module EveBadger
         raise "#{response.xpath("//error").first}"
       end
       @parser.load(response.xpath("//result/*").to_s)
-    end
-
-    def self.trim?
-      if @@request_count > @@cache_trim_interval
-        @@cache_trim_interval = 0
-        true
-      end
-    end
-
-    def self.trim_cache
-      @@request_cache.each do |key, value|
-        @@request_cache.delete(key) if cached_until_elapsed?(value)
-      end
-    end
-
-    def self.cached_until_elapsed?(xml)
-      noko = Nokogiri::XML(xml)
-      Time.now > Time.parse(noko.xpath("//cachedUntil").first.content)
-    end
-
-    def self.cache_trim_interval=(interval)
-      @@cache_trim_interval = interval.to_i
     end
   end
 end
