@@ -11,7 +11,6 @@ module EveBadger
   USER_AGENT = "EveBadger-#{VERSION}/Ruby-#{RUBY_VERSION}"
   TQ_API_DOMAIN = 'https://api.eveonline.com/'
   SISI_API_DOMAIN = 'https://api.testeveonline.com/'
-  CACHE_FILE = File.expand_path(File.join(File.dirname(__FILE__), '..', 'cache', 'moneta'))
   ACCOUNT_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'account_endpoints.json'))
   CHARACTER_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'character_endpoints.json'))
   CORPORATION_ENDPOINTS_JSON = File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'corporation_endpoints.json'))

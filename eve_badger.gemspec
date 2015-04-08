@@ -11,5 +11,6 @@ Gem::Specification.new do |gemspec|
   gemspec.add_runtime_dependency 'badgerfish', '~> 0.2.0'
   gemspec.add_runtime_dependency 'slowweb', '~> 0.1.1'
   gemspec.add_runtime_dependency 'moneta', '~> 0.8.0'
+  gemspec.add_runtime_dependency 'redis', '~> 3.2', '>= 3.2.0'
   gemspec.add_development_dependency 'rspec', '~> 3'
 end
