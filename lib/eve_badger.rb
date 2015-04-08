@@ -8,7 +8,7 @@ require 'moneta'
 
 module EveBadger
   VERSION = File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', 'VERSION')))
-  USER_AGENT = "EveBadger-#{VERSION}/Ruby#{RUBY_VERSION}"
+  USER_AGENT = "EveBadger-#{VERSION}/Ruby-#{RUBY_VERSION}"
   TQ_API_DOMAIN = 'https://api.eveonline.com/'
   SISI_API_DOMAIN = 'https://api.testeveonline.com/'
   CACHE_FILE = File.expand_path(File.join(File.dirname(__FILE__), '..', 'cache', 'moneta'))
@@ -37,7 +37,8 @@ module EveBadger
   end
 
   class EveAPI
-    attr_accessor :key_id, :vcode, :character_id, :access_mask, :user_agent
+    attr_accessor :user_agent
+    attr_reader :key_id, :vcode, :character_id, :access_mask
 
     @@request_cache = Moneta.new(:Redis)
 
@@ -62,12 +63,28 @@ module EveBadger
 
     def initialize(args={})
       @domain = args[:sisi] ? SISI_API_DOMAIN : TQ_API_DOMAIN
-      @user_agent = args[:user_agent] || USER_AGENT
+      @user_agent = args[:user_agent].to_s || USER_AGENT
       @parser = Badgerfish::Parser.new
-      @key_id = args[:key_id].to_s
-      @vcode = args[:vcode]
-      @character_id = args[:character_id].to_s
-      @access_mask = args[:access_mask]
+      @key_id = args[:key_id].to_s if args[:key_id]
+      @vcode = args[:vcode].to_s if args[:vcode]
+      @character_id = args[:character_id].to_s if args[:character_id]
+      @access_mask = args[:access_mask].to_i if args[:access_mask]
+    end
+
+    def key_id=(id)
+      @key_id = id ? id.to_s : nil
+    end
+
+    def vcode=(code)
+      @vcode = code ? code.to_s : nil
+    end
+
+    def character_id=(id)
+      @character_id = id ? id.to_s : nil
+    end
+
+    def access_mask=(mask)
+      @access_mask = mask ? mask.to_i : nil
     end
 
     def account(endpoint_name)
@@ -119,7 +136,7 @@ module EveBadger
     end
 
     def endpoint_permitted?(endpoint)
-      endpoint[:access_mask].zero? or (get_access_mask % endpoint[:access_mask] != 0)
+      endpoint[:access_mask].zero? or (get_access_mask & endpoint[:access_mask] != 0)
     end
 
     def build_uri(endpoint)
