@@ -90,3 +90,4 @@ crashlytics-build.properties
 cache/
 lib/scratch.rb
 samples/
+coverage/

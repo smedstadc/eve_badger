@@ -9,6 +9,22 @@ describe "EveBadger" do
     @test_vcode = 'H7MGidb2MB7MzqPvqOOz7RtdjEyY4dHTP8u8Ojf7ywUOQ7MC8RQFRvSDQuFaX02R'
     @test_char_id = '93772629'
     @test_mask = '26091848'
+    @test_key_type = 'Character'
+  end
+
+  describe "Module" do
+    it "should get version" do
+      expect(EveBadger.version).to eq('0.0.1')
+    end
+    it "should get user agent" do
+      expect(EveBadger.user_agent).to_not be_nil
+    end
+    it "should get tq domain" do
+      expect(EveBadger.tq_domain).to eq('https://api.eveonline.com/')
+    end
+    it "should get sisi domain" do
+      expect(EveBadger.sisi_domain).to eq('https://api.testeveonline.com/')
+    end
   end
 
   describe "EveAPI Object Creation" do
@@ -18,21 +34,25 @@ describe "EveBadger" do
       expect(@api.vcode).to be_nil
       expect(@api.character_id).to be_nil
       expect(@api.access_mask).to be_nil
+      expect(@api.key_type).to be_nil
     end
 
     it "should initialize attributes" do
       @api = EveBadger::EveAPI.new(key_id: @test_key_id, vcode: @test_vcode,
-                                   character_id: @test_char_id, access_mask: @test_mask)
+                                   character_id: @test_char_id, access_mask: @test_mask, key_type: @test_key_type)
       expect(@api.key_id).to eq @test_key_id
       expect(@api.vcode).to eq @test_vcode
       expect(@api.character_id).to eq @test_char_id
       expect(@api.access_mask).to eq @test_mask.to_i
+      expect(@api.key_type).to eq @test_key_type.to_sym
       @api = EveBadger::EveAPI.new(key_id: @test_key_id.to_i, vcode: @test_vcode,
-                                   character_id: @test_char_id.to_i, access_mask: @test_mask.to_i)
+                                   character_id: @test_char_id.to_i, access_mask: @test_mask.to_i,
+                                   key_type: @test_key_type.to_sym)
       expect(@api.key_id).to eq @test_key_id
       expect(@api.vcode).to eq @test_vcode
       expect(@api.character_id).to eq @test_char_id
       expect(@api.access_mask).to eq @test_mask.to_i
+      expect(@api.key_type).to eq @test_key_type.to_sym
     end
 
     it "should set and get attributes" do
@@ -51,6 +71,21 @@ describe "EveBadger" do
       expect(@api.access_mask).to eq @test_mask.to_i
       @api.access_mask = @test_mask.to_i
       expect(@api.access_mask).to eq @test_mask.to_i
+    end
+  end
+
+  describe "EveAPI Cache Settings" do
+    it "should default to some kind of cache" do
+      expect(EveBadger::EveAPI.class_variable_get(:@@request_cache)).to_not be_nil
+    end
+    it "should let user disable cache" do
+      expect(EveBadger::EveAPI.class_variable_get(:@@request_cache)).to_not be_nil
+      EveBadger::EveAPI.disable_request_cache
+      expect(EveBadger::EveAPI.class_variable_get(:@@request_cache)).to be_nil
+    end
+    it "should let user enable cache" do
+      EveBadger::EveAPI.enable_request_cache
+      expect(EveBadger::EveAPI.class_variable_get(:@@request_cache)).to_not be_nil
     end
   end
 
@@ -196,6 +231,17 @@ describe "EveBadger" do
     it "should get character sheet" do
       response = @api.character(:character_sheet)
       expect(response['characterID']['$']).to eq(@test_char_id)
+    end
+  end
+
+  describe "EveAPI Corporation Endpoint Usage" do
+    before(:each) do
+      @api = EveBadger::EveAPI.new(key_id: @test_key_id, vcode: @test_vcode,
+                                   character_id: @test_char_id, access_mask: @test_mask)
+      @corpsheet_endpoint = {path: "Corp/CorporationSheet", access_mask: 0}
+    end
+    it "should raise exception when not a corporation key" do
+      expect {@api.corporation(:corporation_sheet)}.to raise_exception
     end
   end
 end
