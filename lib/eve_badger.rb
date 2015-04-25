@@ -41,7 +41,7 @@ module EveBadger
 
   class EveAPI
     attr_accessor :user_agent
-    attr_reader :key_id, :vcode, :character_id, :access_mask, :key_type
+    attr_reader :key_id, :vcode, :character_id, :access_mask
 
     open(File.expand_path(File.join(File.dirname(__FILE__), '..', 'json', 'account_endpoints.json')), 'r') do |file|
       @@account_endpoint = JSON.parse(file.read.to_s, :symbolize_names => true)
@@ -90,6 +90,10 @@ module EveBadger
 
     def key_type=(type)
       @key_type = type ? type.to_sym : nil
+    end
+
+    def key_type
+      @key_type ||= get_key_type
     end
 
     def account(endpoint_name)
