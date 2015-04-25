@@ -140,6 +140,11 @@ describe "EveBadger" do
       @api.account(:account_status)
     end
 
+    it "should build params without any character_id set" do
+      @api.character_id = nil
+      expect(@api.send(:params)).to_not be_nil
+    end
+
     it "should get response from cache if possible" do
       allow(@api).to receive(:endpoint_permitted?).and_return(true)
       allow(@api).to receive(:build_uri).and_return('url')

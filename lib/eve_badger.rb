@@ -14,10 +14,10 @@ module EveBadger
     @user_agent ||= "EveBadger-#{version}/Ruby-#{RUBY_VERSION}"
   end
   def self.tq_domain
-    @tq_domain ||= 'https://api.eveonline.com/'
+    'https://api.eveonline.com/'
   end
   def self.sisi_domain
-    @sisi_domain ||= 'https://api.testeveonline.com/'
+    'https://api.testeveonline.com/'
   end
 
   # According to CCP the default limit for API access is 30 requests per minute.
@@ -93,27 +93,27 @@ module EveBadger
     end
 
     def account(endpoint_name)
-      raise "missing required key_id or vcode" unless @key_id && @vcode
+      raise 'missing required key_id or vcode' unless @key_id && @vcode
       endpoint = @@account_endpoint[endpoint_name.to_sym]
       badgerfish_from api_request(endpoint)
     end
 
     def character(endpoint_name)
-      raise "missing required character_id key_id or_vcode" unless @character_id && @key_id && @vcode
-      raise "wrong key type" unless get_key_type == :Character || :Account
+      raise 'missing required character_id key_id or_vcode' unless @character_id && @key_id && @vcode
+      raise 'wrong key type' unless get_key_type == :Character || :Account
       endpoint = @@character_endpoint[endpoint_name.to_sym]
       badgerfish_from api_request(endpoint)
     end
 
     def corporation(endpoint_name)
-      raise "missing required character_id key_id or_vcode" unless @character_id && @key_id && @vcode
-      raise "wrong key type" unless get_key_type == :Corporation
+      raise 'missing required character_id key_id or_vcode' unless @character_id && @key_id && @vcode
+      raise 'wrong key type' unless get_key_type == :Corporation
       endpoint = @@corporation_endpoint[endpoint_name.to_sym]
       badgerfish_from api_request(endpoint)
     end
 
     def details(endpoint_name, id_of_interest, fromid=nil, rowcount=nil)
-      raise "wrong key type" unless get_key_type == :Character || :Corporation || :Account
+      raise 'wrong key type' unless get_key_type == :Character || :Corporation || :Account
       endpoint = @@detail_endpoint[endpoint_name.to_sym]
       if endpoint_permitted?(endpoint)
         uri = build_uri(endpoint)
@@ -130,7 +130,6 @@ module EveBadger
       @@request_cache = nil
     end
 
-    # TODO allow user to select backend for Moneta
     def self.enable_request_cache
       begin
         @@request_cache = Moneta.new(:Redis)
@@ -149,7 +148,7 @@ module EveBadger
     end
 
     def get_key_type
-      @key_type ||= account(:api_key_info)["key"]["@type"].to_sym
+      @key_type ||= account(:api_key_info)['key']['@type'].to_sym
     end
 
     def endpoint_permitted?(endpoint)
@@ -157,7 +156,7 @@ module EveBadger
     end
 
     def get_access_mask
-      @access_mask ||= account(:api_key_info)["key"]["@accessMask"].to_i || nil
+      @access_mask ||= account(:api_key_info)['key']['@accessMask'].to_i || nil
     end
 
     def build_uri(endpoint)
@@ -165,9 +164,7 @@ module EveBadger
     end
 
     def params
-      if @character_id
-        "?keyID=#{@key_id}&vCode=#{@vcode}#{"&characterID=" + @character_id if @character_id}"
-      end
+        "?keyID=#{@key_id}&vCode=#{@vcode}#{'&characterID=' + @character_id if @character_id}"
     end
 
     def get_response(uri)
@@ -200,20 +197,20 @@ module EveBadger
 
     def seconds_until_expire(xml)
       noko = Nokogiri::XML xml
-      cached_until = Time.parse(noko.xpath("//cachedUntil").first.content)
+      cached_until = Time.parse(noko.xpath('//cachedUntil').first.content)
       cached_until.to_i - Time.now.to_i
     end
 
     def raise_for_api_errors!(response)
       noko = Nokogiri::XML(response)
-      if noko.xpath("//error").any?
-        raise EveBadger::CCPPleaseError, "#{noko.xpath("//error").first}"
+      if noko.xpath('//error').any?
+        raise EveBadger::CCPPleaseError, "#{noko.xpath('//error').first}"
       end
     end
 
     def badgerfish_from(xml)
       response = Nokogiri::XML(xml)
-      Badgerfish::Parser.new.load(response.xpath("//result/*").to_s)
+      Badgerfish::Parser.new.load(response.xpath('//result/*').to_s)
     end
   end
 
