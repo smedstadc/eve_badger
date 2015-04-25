@@ -75,16 +75,16 @@ describe "EveBadger" do
 
   describe "EveAPI Cache Settings" do
     it "should default to some kind of cache" do
-      expect(EveBadger::EveAPI.class_variable_get(:@@request_cache)).to_not be_nil
+      expect(EveBadger::EveAPI.request_cache).to_not be_nil
     end
     it "should let user disable cache" do
-      expect(EveBadger::EveAPI.class_variable_get(:@@request_cache)).to_not be_nil
+      expect(EveBadger::EveAPI.request_cache).to_not be_nil
       EveBadger::EveAPI.disable_request_cache
-      expect(EveBadger::EveAPI.class_variable_get(:@@request_cache)).to be_nil
+      expect(EveBadger::EveAPI.request_cache).to be_nil
     end
     it "should let user enable cache" do
       EveBadger::EveAPI.enable_request_cache
-      expect(EveBadger::EveAPI.class_variable_get(:@@request_cache)).to_not be_nil
+      expect(EveBadger::EveAPI.request_cache).to_not be_nil
     end
   end
 
