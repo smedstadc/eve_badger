@@ -6,7 +6,7 @@ module EveBadger
     @version ||= File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', 'VERSION')))
   end
   def self.user_agent
-    @user_agent ||= "EveBadger-#{version}/Ruby-#{RUBY_VERSION}"
+    "EveBadger-#{EveBadger.version}/Ruby-#{RUBY_VERSION}"
   end
   def self.tq_domain
     'https://api.eveonline.com/'

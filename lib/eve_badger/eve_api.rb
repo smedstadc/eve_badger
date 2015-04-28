@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'time'
 require 'badgerfish'
+require 'open-uri'
 require_relative 'endpoint_data'
 require_relative 'request_cache'
 
@@ -13,7 +14,7 @@ module EveBadger
 
     def initialize(args={})
       @domain = args[:sisi] ? EveBadger.sisi_domain : EveBadger.tq_domain
-      @user_agent = args[:user_agent].to_s || EveBadger.user_agent
+      @user_agent = EveBadger.user_agent
       @key_id = args[:key_id].to_s if args[:key_id]
       @vcode = args[:vcode].to_s if args[:vcode]
       @character_id = args[:character_id].to_s if args[:character_id]

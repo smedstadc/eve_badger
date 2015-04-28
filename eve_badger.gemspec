@@ -8,7 +8,7 @@ Gem::Specification.new do |gemspec|
   gemspec.email = 'smedstadc@gmail.com'
   gemspec.homepage = 'https://github.com/smedstadc/eve_badger'
   gemspec.license = 'MIT'
-  gemspec.files = Dir['lib/**/*.rb'] + Dir['json/**/*.json'] + Dir['VERSION'] + Dir['LICENSE']
+  gemspec.files = Dir['lib/**/*.*'] + Dir['VERSION'] + Dir['LICENSE']
   gemspec.required_ruby_version = '>= 1.9.3'
   gemspec.add_runtime_dependency 'nokogiri', '~> 1.6'
   gemspec.add_runtime_dependency 'badgerfish', '~> 0.2.0'
