@@ -33,7 +33,6 @@ describe "EveBadger" do
       expect(@api.key_id).to be_nil
       expect(@api.vcode).to be_nil
       expect(@api.character_id).to be_nil
-      expect(@api.access_mask).to be_nil
     end
 
     it "should initialize attributes" do

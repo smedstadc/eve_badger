@@ -8,7 +8,7 @@ require_relative 'request_cache'
 module EveBadger
   class EveAPI
     attr_accessor :user_agent
-    attr_reader :key_id, :vcode, :character_id, :access_mask
+    attr_reader :key_id, :vcode, :character_id
     include EveBadger::EndpointData
     include EveBadger::RequestCache
 
@@ -42,6 +42,10 @@ module EveBadger
       @key_type = type ? type.to_sym : nil
     end
 
+    def access_mask
+      @access_mask ||= get_access_mask
+    end
+
     def key_type
       @key_type ||= get_key_type
     end
@@ -54,20 +58,20 @@ module EveBadger
 
     def character(endpoint_name)
       raise 'missing required character_id key_id or_vcode' unless @character_id && @key_id && @vcode
-      raise 'wrong key type' unless get_key_type == :Character || :Account
+      raise 'wrong key type' unless key_type == :Character || :Account
       endpoint = EveAPI.character_endpoint[endpoint_name.to_sym]
       badgerfish_from api_request(endpoint)
     end
 
     def corporation(endpoint_name)
       raise 'missing required character_id key_id or_vcode' unless @character_id && @key_id && @vcode
-      raise 'wrong key type' unless get_key_type == :Corporation
+      raise 'wrong key type' unless key_type == :Corporation
       endpoint = EveAPI.corporation_endpoint[endpoint_name.to_sym]
       badgerfish_from api_request(endpoint)
     end
 
     def details(endpoint_name, id_of_interest, fromid=nil, rowcount=nil)
-      raise 'wrong key type' unless get_key_type == :Character || :Corporation || :Account
+      raise 'wrong key type' unless key_type == :Character || :Corporation || :Account
       endpoint = EveAPI.detail_endpoint[endpoint_name.to_sym]
       if endpoint_permitted?(endpoint)
         uri = build_uri(endpoint)
@@ -89,16 +93,24 @@ module EveBadger
       end
     end
 
-    def get_key_type
-      @key_type ||= account(:api_key_info)['key']['@type'].to_sym
-    end
-
     def endpoint_permitted?(endpoint)
-      endpoint[:access_mask].zero? or (get_access_mask & endpoint[:access_mask] != 0)
+      endpoint[:access_mask].zero? or (access_mask & endpoint[:access_mask] != 0)
     end
 
     def get_access_mask
-      @access_mask ||= account(:api_key_info)['key']['@accessMask'].to_i || nil
+      fetch_key_info unless @access_mask
+      @access_mask
+    end
+
+    def get_key_type
+      fetch_key_info unless @key_type
+      @key_type
+    end
+
+    def fetch_key_info
+      info = account(:api_key_info)
+      @access_mask = info['key']['@accessMask'].to_i
+      @key_type = info['key']['@type'].to_sym
     end
 
     def build_uri(endpoint)
