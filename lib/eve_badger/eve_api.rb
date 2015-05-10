@@ -118,7 +118,7 @@ module EveBadger
     end
 
     def params
-      "?keyID=#{@key_id}&vCode=#{@vcode}#{'&characterID=' + @character_id if @character_id}"
+      "?keyID=#{@key_id}&vCode=#{@vcode}#{"&characterID=#{@character_id}" if @character_id}"
     end
 
     def get_response(uri)
