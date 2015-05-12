@@ -247,4 +247,8 @@ describe "EveBadger" do
       expect {@api.corporation(:corporation_sheet)}.to raise_exception
     end
   end
+
+  describe "EveAPI Detail Endpoint Usage" do
+    pending "TODO: Write These Tests"
+  end
 end

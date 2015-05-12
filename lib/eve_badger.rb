@@ -1,5 +1,5 @@
 require 'slowweb'
-require_relative 'eve_badger/eve_api'
+require 'eve_badger/eve_api'
 
 module EveBadger
   def self.version

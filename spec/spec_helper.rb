@@ -1,2 +1,3 @@
-require File.dirname(__FILE__) + '/../lib/eve_badger'
+$LOAD_PATH << '../../lib'
+require 'eve_badger'
 require 'rspec'

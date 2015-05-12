@@ -2,8 +2,8 @@ require 'nokogiri'
 require 'time'
 require 'badgerfish'
 require 'open-uri'
-require_relative 'endpoint_data'
-require_relative 'request_cache'
+require 'eve_badger/endpoint_data'
+require 'eve_badger/request_cache'
 
 module EveBadger
   class EveAPI
