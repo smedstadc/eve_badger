@@ -11,6 +11,7 @@ module EveBadger
   def self.tq_domain
     'https://api.eveonline.com/'
   end
+
   def self.sisi_domain
     'https://api.testeveonline.com/'
   end
