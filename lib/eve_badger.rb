@@ -25,14 +25,14 @@ module EveBadger
   end
 
   def self.enable_default_throttling
-    SlowWeb.limit(@tq_domain, 30, 60)
-    SlowWeb.limit(@sisi_domain, 30, 60)
+    SlowWeb.limit(tq_domain, 30, 60)
+    SlowWeb.limit(sisi_domain, 30, 60)
   end
 
   def self.enable_custom_throttling(requests_per_minute)
     SlowWeb.reset
-    SlowWeb.limit(@tq_domain, requests_per_minute, 60)
-    SlowWeb.limit(@sisi_domain, requests_per_minute, 60)
+    SlowWeb.limit(tq_domain, requests_per_minute, 60)
+    SlowWeb.limit(sisi_domain, requests_per_minute, 60)
   end
 
   class CCPPleaseError < StandardError
