@@ -1,3 +1,6 @@
+.ruby-gemset
+.ruby-version
+
 # Created by .ignore support plugin (hsz.mobi)
 ### Ruby template
 *.gem
