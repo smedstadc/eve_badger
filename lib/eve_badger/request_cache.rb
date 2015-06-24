@@ -7,11 +7,7 @@ module EveBadger
     end
 
     module RequestCache
-      begin
-        @@request_cache = Moneta.new(:Redis)
-      rescue
-        @@request_cache = Moneta.new(:File, dir: File.expand_path(File.join(File.dirname(__FILE__), '..', 'cache')))
-      end
+      @@request_cache = Moneta.new(:File, dir: File.expand_path(File.join(File.dirname(__FILE__), 'cache')))
 
       def request_cache
         @@request_cache
@@ -22,11 +18,7 @@ module EveBadger
       end
 
       def enable_request_cache
-        begin
-          @@request_cache = Moneta.new(:Redis)
-        rescue
-          @@request_cache = Moneta.new(:File, dir: File.expand_path(File.join(File.dirname(__FILE__), '..', 'cache')))
-        end
+        @@request_cache = Moneta.new(:File, dir: File.expand_path(File.join(File.dirname(__FILE__), 'cache')))
       end
     end
   end

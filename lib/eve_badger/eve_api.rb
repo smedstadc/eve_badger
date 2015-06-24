@@ -4,6 +4,7 @@ require 'badgerfish'
 require 'open-uri'
 require 'eve_badger/endpoint_data'
 require 'eve_badger/request_cache'
+require 'digest/sha1'
 
 module EveBadger
   class EveAPI
@@ -129,7 +130,7 @@ module EveBadger
 
     def cache_get(uri)
       if EveAPI.request_cache
-        EveAPI.request_cache[uri]
+        EveAPI.request_cache[hash_of(uri)]
       end
     end
 
@@ -145,8 +146,12 @@ module EveBadger
 
     def cache_response(uri, response)
       if EveAPI.request_cache
-        EveAPI.request_cache.store(uri, response, expires: seconds_until_expire(response))
+        EveAPI.request_cache.store(hash_of(uri), response, expires: seconds_until_expire(response))
       end
+    end
+
+    def hash_of(uri)
+      Digest::SHA1.hexdigest(uri + EveBadger.salt)
     end
 
     def seconds_until_expire(xml)

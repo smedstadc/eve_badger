@@ -14,7 +14,7 @@ describe "EveBadger" do
 
   describe "Module" do
     it "should get version" do
-      expect(EveBadger.version).to eq('0.0.1')
+      expect(EveBadger.version).to eq('0.2.0')
     end
     it "should get user agent" do
       expect(EveBadger.user_agent).to_not be_nil

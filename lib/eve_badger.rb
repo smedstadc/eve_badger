@@ -2,12 +2,22 @@ require 'slowweb'
 require 'eve_badger/eve_api'
 
 module EveBadger
-  def self.version
-    @version ||= File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', 'VERSION')))
+  unless ENV['EVE_BADGER_SALT']
+    warn "Warning: ENV['EVE_BADGER_SALT'] NOT SET!"
   end
+
+  def self.version
+    @version ||= File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', 'VERSION'))).chomp
+  end
+
+  def self.salt
+    @salt ||= ENV['EVE_BADGER_SALT'] || ''
+  end
+
   def self.user_agent
     "EveBadger-#{EveBadger.version}/Ruby-#{RUBY_VERSION}"
   end
+
   def self.tq_domain
     'https://api.eveonline.com/'
   end
@@ -35,6 +45,7 @@ module EveBadger
     SlowWeb.limit(sisi_domain, requests_per_minute, 60)
   end
 
+  # Exception to raise when the Eve API returns an error code in the response.
   class CCPPleaseError < StandardError
   end
 end
