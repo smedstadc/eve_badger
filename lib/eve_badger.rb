@@ -3,19 +3,11 @@ require 'eve_badger/eve_api'
 require 'eve_badger/endpoints'
 
 module EveBadger
-  unless ENV['EVE_BADGER_SALT']
-    warn "Warning: ENV['EVE_BADGER_SALT'] NOT SET!"
-  end
-
   def self.version
     @version ||= File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', 'VERSION'))).chomp
   end
 
-  def self.salt
-    @salt ||= ENV['EVE_BADGER_SALT'] || ''
-  end
-
-  def self.user_agent
+  def self.default_user_agent
     "EveBadger-#{EveBadger.version}/Ruby-#{RUBY_VERSION}"
   end
 

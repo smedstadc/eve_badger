@@ -1,7 +1,7 @@
 require 'nokogiri'
 require 'time'
-require 'badgerfish'
 require 'open-uri'
+require 'eve_badger'
 require 'eve_badger/endpoints'
 require 'eve_badger/response'
 require 'eve_badger/cache'
@@ -10,18 +10,22 @@ require 'digest/sha1'
 module EveBadger
   class EveAPI
     attr_accessor :user_agent
-    attr_reader :key_id, :vcode, :character_id
+    attr_reader :key_id, :vcode, :character_id, :domain
 
     def initialize(args={})
-      @domain = args[:sisi] ? EveBadger.sisi_domain : EveBadger.tq_domain
-      @user_agent = EveBadger.user_agent
+      if args[:server] == :sisi
+        @domain = EveBadger.sisi_domain
+      else
+        @domain = EveBadger.tq_domain
+      end
+      @user_agent = EveBadger.default_user_agent
       @key_id = args[:key_id].to_s if args[:key_id]
       @vcode = args[:vcode].to_s if args[:vcode]
       @character_id = args[:character_id].to_s if args[:character_id]
       @access_mask = args[:access_mask].to_i if args[:access_mask]
       @key_type = args[:key_type].to_sym if args[:key_type]
     end
-dd 
+
     def key_id=(id)
       @key_id = id ? id.to_s : nil
     end
@@ -73,7 +77,7 @@ dd
     def details(endpoint_name, id_of_interest, fromid=nil, rowcount=nil)
       raise 'wrong key type' unless key_type == :Character || :Corporation || :Account
       endpoint = EveAPI.detail_endpoint[endpoint_name.to_sym]
-      if endpoint_permitted?(endpoint)
+      if endpoint.permitted?(access_mask)
         uri = build_uri(endpoint)
         uri << "&#{endpoint[:detail_id]}=#{id_of_interest}"
         uri << "&fromID=#{fromid}" if fromid
@@ -86,7 +90,7 @@ dd
 
     private
     def api_request(endpoint)
-      if endpoint.permitted?(access_mask)
+      if endpoint.access_mask.zero? or endpoint.permitted?(access_mask)
         get_response(build_uri(endpoint))
       else
         raise "#{endpoint.path} not permitted by access mask"
@@ -105,8 +109,8 @@ dd
 
     def fetch_key_info
       info = account(:api_key_info).as_json
-      @access_mask = info['key']['@accessMask'].to_i
-      @key_type = info['key']['@type'].to_sym
+      @access_mask = info['result']['key']['@accessMask'].to_i
+      @key_type = info['result']['key']['@type'].to_sym
     end
 
     def build_uri(endpoint)
@@ -147,7 +151,7 @@ dd
 
     # Hash URI's before use as a cache key so that API key/vcode combinations don't leak from the cache monitor or logs.
     def hash_of(uri)
-      Digest::SHA1.hexdigest(uri + EveBadger.salt)
+      Digest::SHA1.hexdigest(uriu)
     end
 
     def cached_until(xml)
