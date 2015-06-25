@@ -1,4 +1,5 @@
 require 'spec_helper'
+
 describe "EveBadger" do
   before(:all) do
     # This key has all public information enabled as well as the private endpoints for

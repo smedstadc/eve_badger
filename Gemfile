@@ -7,6 +7,7 @@ gem 'moneta'
 gem 'redis'
 
 group :development, :test do
-  gem 'rspec'
+  gem 'minitest'
+  gem 'minitest-reporters'
   gem 'simplecov'
 end

@@ -2,16 +2,15 @@ require 'nokogiri'
 require 'time'
 require 'badgerfish'
 require 'open-uri'
-require 'eve_badger/endpoint_data'
-require 'eve_badger/request_cache'
+require 'eve_badger/endpoints'
+require 'eve_badger/response'
+require 'eve_badger/cache'
 require 'digest/sha1'
 
 module EveBadger
   class EveAPI
     attr_accessor :user_agent
     attr_reader :key_id, :vcode, :character_id
-    include EveBadger::EndpointData
-    include EveBadger::RequestCache
 
     def initialize(args={})
       @domain = args[:sisi] ? EveBadger.sisi_domain : EveBadger.tq_domain
@@ -22,7 +21,7 @@ module EveBadger
       @access_mask = args[:access_mask].to_i if args[:access_mask]
       @key_type = args[:key_type].to_sym if args[:key_type]
     end
-
+dd 
     def key_id=(id)
       @key_id = id ? id.to_s : nil
     end
@@ -53,22 +52,22 @@ module EveBadger
 
     def account(endpoint_name)
       raise 'missing required key_id or vcode' unless @key_id && @vcode
-      endpoint = EveAPI.account_endpoint[endpoint_name.to_sym]
-      badgerfish_from api_request(endpoint)
+      endpoint = EveBadger::Endpoints.account(endpoint_name.to_sym)
+      api_request(endpoint)
     end
 
     def character(endpoint_name)
       raise 'missing required character_id key_id or_vcode' unless @character_id && @key_id && @vcode
       raise 'wrong key type' unless key_type == :Character || :Account
       endpoint = EveAPI.character_endpoint[endpoint_name.to_sym]
-      badgerfish_from api_request(endpoint)
+      api_request(endpoint)
     end
 
     def corporation(endpoint_name)
       raise 'missing required character_id key_id or_vcode' unless @character_id && @key_id && @vcode
       raise 'wrong key type' unless key_type == :Corporation
       endpoint = EveAPI.corporation_endpoint[endpoint_name.to_sym]
-      badgerfish_from api_request(endpoint)
+      api_request(endpoint)
     end
 
     def details(endpoint_name, id_of_interest, fromid=nil, rowcount=nil)
@@ -79,23 +78,19 @@ module EveBadger
         uri << "&#{endpoint[:detail_id]}=#{id_of_interest}"
         uri << "&fromID=#{fromid}" if fromid
         uri << "&rowCount=#{rowcount}" if rowcount
-        badgerfish_from get_response(uri)
+        get_response(uri)
       else
-        raise "#{endpoint[:path]} not permitted by access mask"
+        raise "#{endpoint.path} not permitted by access mask"
       end
     end
 
     private
     def api_request(endpoint)
-      if endpoint_permitted?(endpoint)
+      if endpoint.permitted?(access_mask)
         get_response(build_uri(endpoint))
       else
-        raise "#{endpoint[:path]} not permitted by access mask"
+        raise "#{endpoint.path} not permitted by access mask"
       end
-    end
-
-    def endpoint_permitted?(endpoint)
-      endpoint[:access_mask].zero? or (access_mask & endpoint[:access_mask] != 0)
     end
 
     def get_access_mask
@@ -109,13 +104,13 @@ module EveBadger
     end
 
     def fetch_key_info
-      info = account(:api_key_info)
+      info = account(:api_key_info).as_json
       @access_mask = info['key']['@accessMask'].to_i
       @key_type = info['key']['@type'].to_sym
     end
 
     def build_uri(endpoint)
-      "#{@domain}#{endpoint[:path]}.xml.aspx#{params}"
+      "#{@domain}#{endpoint.path}.xml.aspx#{params}"
     end
 
     def params
@@ -125,12 +120,12 @@ module EveBadger
     def get_response(uri)
       response = cache_get(uri) || http_get(uri)
       raise_for_api_errors! response
-      response
+      EveBadger::Response.new(response)
     end
 
     def cache_get(uri)
-      if EveAPI.request_cache
-        EveAPI.request_cache[hash_of(uri)]
+      if EveBadger::Cache.enabled?
+        EveBadger::Cache.get(hash_of(uri))
       end
     end
 
@@ -140,36 +135,32 @@ module EveBadger
       rescue OpenURI::HTTPError => error
         response = error.io.string
       end
-      cache_response(uri, response)
-      cache_get(uri) || response
+      store_response(uri, response)
+      response || cache_get(uri)
     end
 
-    def cache_response(uri, response)
-      if EveAPI.request_cache
-        EveAPI.request_cache.store(hash_of(uri), response, expires: seconds_until_expire(response))
+    def store_response(uri, response)
+      if EveBadger::Cache.enabled?
+        EveBadger::Cache.store(hash_of(uri), response, expires: cached_until(response))
       end
     end
 
+    # Hash URI's before use as a cache key so that API key/vcode combinations don't leak from the cache monitor or logs.
     def hash_of(uri)
       Digest::SHA1.hexdigest(uri + EveBadger.salt)
     end
 
-    def seconds_until_expire(xml)
+    def cached_until(xml)
       noko = Nokogiri::XML xml
-      cached_until = Time.parse(noko.xpath('//cachedUntil').first.content)
-      cached_until.to_i - Time.now.to_i
+      seconds_until_expire = Time.parse(noko.xpath('//cachedUntil').text)
+      seconds_until_expire.to_i - Time.now.to_i
     end
 
     def raise_for_api_errors!(response)
       noko = Nokogiri::XML(response)
       if noko.xpath('//error').any?
-        raise EveBadger::CCPPleaseError, "#{noko.xpath('//error').first}"
+        raise "#{noko.xpath('//error').first}"
       end
-    end
-
-    def badgerfish_from(xml)
-      response = Nokogiri::XML(xml)
-      Badgerfish::Parser.new.load(response.xpath('//result/*').to_s)
     end
   end
 end

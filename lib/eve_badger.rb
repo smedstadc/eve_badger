@@ -1,5 +1,6 @@
 require 'slowweb'
 require 'eve_badger/eve_api'
+require 'eve_badger/endpoints'
 
 module EveBadger
   unless ENV['EVE_BADGER_SALT']
