@@ -3,10 +3,18 @@ require 'digest/sha1'
 
 module EveBadger
   module Cache
-    @cache = Moneta.new(:File, dir: File.expand_path(File.join(File.dirname(__FILE__), 'cache')), expires: true)
+    # Cache is disabled by default
+    @cache = nil
 
-    def self.enable!
-      @cache = Moneta.new(:File, dir: File.expand_path(File.join(File.dirname(__FILE__), 'cache')), expires: true)
+    # EveBadger uses the moneta gem to handle caching. Enable caching by passing any Moneta object to .enable!
+    # Remember to pass the 'expires: true' option for the :Memory and :File cache types or EveBadger won't invalidate
+    # cache values older than their cachedUntil timestamps.
+    def self.enable!(handler=Moneta.new(:Memory, expires: true))
+      if [Moneta::Transformer::MarshalPrefixKeyMarshalValue, Moneta::Expires].include? handler.class
+        @cache = handler
+      else
+        raise ArgumentError, "handler must be a Moneta object"
+      end
     end
 
     def self.disable!

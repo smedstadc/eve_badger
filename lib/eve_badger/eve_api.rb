@@ -151,7 +151,7 @@ module EveBadger
 
     # Hash URI's before use as a cache key so that API key/vcode combinations don't leak from the cache monitor or logs.
     def hash_of(uri)
-      Digest::SHA1.hexdigest(uriu)
+      Digest::SHA1.hexdigest(uri)
     end
 
     def cached_until(xml)

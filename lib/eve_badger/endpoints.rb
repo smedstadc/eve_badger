@@ -33,23 +33,27 @@ module EveBadger
     end
 
     def self.account(endpoint)
-      endpoint_data = @account_endpoints[endpoint]
-      unless endpoint_data
-        raise "unsupported endpoint: #{endpoint}"
-      end
-      Endpoint.new(@account_endpoints[endpoint])
+      data = @account_endpoints[endpoint]
+      raise ArgumentError, "unsupported endpoint: #{endpoint}" unless data
+      Endpoint.new(data)
     end
 
     def self.character(endpoint)
-      Endpoint.new(@character_endpoints[endpoint])
+      data = @character_endpoints[endpoint]
+      raise ArgumentError, "unsupported endpoint: #{endpoint}" unless data
+      Endpoint.new(data)
     end
 
     def self.corporation(endpoint)
-      Endpoint.new(@corporation_endpoints[endpoint])
+      data = @corporation_endpoints[endpoint]
+      raise ArgumentError, "unsupported endpoint: #{endpoint}" unless data
+      Endpoint.new(data)
     end
 
     def self.detail(endpoint)
-      Endpoint.new(@detail_endpoints[endpoint])
+      data = @detail_endpoints[endpoint]
+      raise ArgumentError, "unsupported endpoint: #{endpoint}" unless data
+      Endpoint.new(data)
     end
   end
 end
