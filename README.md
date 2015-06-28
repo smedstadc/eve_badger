@@ -1,17 +1,17 @@
 # EveBadger
 
-It badgers the Eve: Online API for [badgerfish](http://badgerfish.ning.com/) responses. Get it?
+It badgers the Eve: Online API for [badgerfish](http://badgerfish.ning.com/) responses. Get it? (Don't worry. You can still get plain XML if you want to.)
 
 ## About
 
-EveBadger is a lightweight interface to the Eve: Online API. Build an EveAPI object to represent your API key and call out to the endpoint you're interested in. It'll return a JSON/Hash representing the response. It also handles caching, throttling and access masks out of the box.
+EveBadger is a lightweight interface to the Eve: Online XML API. Build an EveAPI object to represent your API key and call out to the endpoint you're interested in. It'll return a response object that you can can easily consume as JSON or XML. EveBadger also respects access masks automatically and makes caching and throttling responses as easy as flipping a switch.
 
 I wrote this for 3 reasons:
 
 * I prefer working with JSON over XML
 * I wasn't in love with existing EveAPI solutions
 * I wanted to learn how to build a custom Gem (Ruby packaging is awesome, btw)
- 
+
 ## What does it do?
 
 * Obeys CCP's default request rate limit (can be disabled if you have an exception)
@@ -28,15 +28,13 @@ I wrote this for 3 reasons:
 ## Planned Improvements
 
 * **Full API Coverage** Right now EveBadger covers the stuff I use the most. Eventually I'll go through and add all the remaining endpoints.
-* **Cache Configuration** EveBadger uses the Moneta gem for caching. Currently it's pretty dumb and only tries to link up with an unprotected redis instance on localhost, if this fails it'll fall back to an in-memory Moneta store. I'd like to allow users to configure most aspects of the Moneta store.
 * **Rowset Extraction** *(Maybe)* I'm happy with JSON responses for the most part. I don't want or need a full object for every endpoint, but a single basic response object which does a nice job of extracting rowsets and delegating indexes might be nice.
-* **RubyGems** Once I polish a few things and settle on a handful of decisions I'll publish this to rubygems.
 
 ## Usage Examples
 
 The basic idea is to make an EveAPI object and call the appropriate category method with the symbol representing the name of the endpoint. It'll spit back JSON and you take it from there.
 
-I think you'll find that the category methods and endpoint names map directly to the EveAPI documentation at [this location](https://neweden-dev.com/API). 
+I think you'll find that the category methods and endpoint names map directly to the EveAPI documentation at [this location](https://neweden-dev.com/API).
 
 ### Getting a Character List
 ```ruby
