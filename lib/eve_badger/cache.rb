@@ -2,19 +2,21 @@ require 'moneta'
 require 'digest/sha1'
 
 module EveBadger
+  # A wrapper around a Moneta object that provides automatic request caching for Evebadger::EveAPI when enabled.
   module Cache
     # Cache is disabled by default
     @cache = nil
+    # These adapters support expiration natively and don't need to be wrapped in Moneta::Expires
+    @native_expires = [:Mongo, :MongoOfficial, :MongoMoped, :Redis, :Cassandra, :MemcachedDalli, :Memcached, :MemcachedNative, :Cookie]
 
-    # EveBadger uses the moneta gem to handle caching. Enable caching by passing any Moneta object to .enable!
-    # Remember to pass the 'expires: true' option for the :Memory and :File cache types or EveBadger won't invalidate
-    # cache values older than their cachedUntil timestamps.
-    def self.enable!(handler=Moneta.new(:Memory, expires: true))
-      if [Moneta::Transformer::MarshalPrefixKeyMarshalValue, Moneta::Expires].include? handler.class
-        @cache = handler
-      else
-        raise ArgumentError, "handler must be a Moneta object"
+    # Enable the cache with a specified Moneta adapter.
+    # See Moneta API documentation for possible configurations: http://www.rubydoc.info/gems/moneta/frames
+    def self.enable!(*args, **kwargs)
+      unless @native_expires.any? { |name| args.include?(name) }
+      # unless false
+        kwargs.merge!({expires: true})
       end
+      @cache = Moneta.new(*args, **kwargs)
     end
 
     def self.disable!
@@ -23,6 +25,10 @@ module EveBadger
 
     def self.enabled?
       @cache ? true : false
+    end
+
+    def self.type
+      @cache.class
     end
 
     def self.store(key, value, options={})

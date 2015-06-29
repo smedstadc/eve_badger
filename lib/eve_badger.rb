@@ -36,8 +36,4 @@ module EveBadger
     SlowWeb.limit(tq_domain, requests_per_minute, 60)
     SlowWeb.limit(sisi_domain, requests_per_minute, 60)
   end
-
-  # Exception to raise when the Eve API returns an error code in the response.
-  class CCPPleaseError < StandardError
-  end
 end

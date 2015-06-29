@@ -55,36 +55,36 @@ module EveBadger
     end
 
     def account(endpoint_name)
-      raise 'missing required key_id or vcode' unless @key_id && @vcode
+      raise EveBadger::APIKeyError, 'missing required key_id or vcode' unless @key_id && @vcode
       endpoint = EveBadger::Endpoints.account(endpoint_name.to_sym)
       api_request(endpoint)
     end
 
     def character(endpoint_name)
-      raise 'missing required character_id key_id or_vcode' unless @character_id && @key_id && @vcode
-      raise 'wrong key type' unless key_type == :Character || :Account
-      endpoint = EveAPI.character_endpoint[endpoint_name.to_sym]
+      raise EveBadger::APIKeyError, 'missing required character_id key_id or_vcode' unless @character_id && @key_id && @vcode
+      raise EveBadger::APIKeyError, 'wrong key type' unless [:Character, :Account].include?(key_type)
+      endpoint = EveBadger::Endpoints.character(endpoint_name.to_sym)
       api_request(endpoint)
     end
 
     def corporation(endpoint_name)
-      raise 'missing required character_id key_id or_vcode' unless @character_id && @key_id && @vcode
-      raise 'wrong key type' unless key_type == :Corporation
-      endpoint = EveAPI.corporation_endpoint[endpoint_name.to_sym]
+      raise EveBadger::APIKeyError, 'missing required character_id key_id or_vcode' unless @character_id && @key_id && @vcode
+      raise EveBadger::APIKeyError, 'wrong key type' unless key_type == :Corporation
+      endpoint = EveBadger::Endpoints.corporation(endpoint_name.to_sym)
       api_request(endpoint)
     end
 
     def details(endpoint_name, id_of_interest, fromid=nil, rowcount=nil)
-      raise 'wrong key type' unless key_type == :Character || :Corporation || :Account
-      endpoint = EveAPI.detail_endpoint[endpoint_name.to_sym]
+      raise EveBadger::APIKeyError, 'wrong key type' unless [:Character, :Corporation, :Account].include?(key_type)
+      endpoint = EveBadger::Endpoints.detail(endpoint_name.to_sym)
       if endpoint.permitted?(access_mask)
         uri = build_uri(endpoint)
-        uri << "&#{endpoint[:detail_id]}=#{id_of_interest}"
+        uri << "&#{endpoint.detail_id}=#{id_of_interest}"
         uri << "&fromID=#{fromid}" if fromid
         uri << "&rowCount=#{rowcount}" if rowcount
         get_response(uri)
       else
-        raise "#{endpoint.path} not permitted by access mask"
+        raise EveBadger::APIKeyError, "#{endpoint.path} not permitted by access mask"
       end
     end
 
@@ -93,7 +93,7 @@ module EveBadger
       if endpoint.access_mask.zero? or endpoint.permitted?(access_mask)
         get_response(build_uri(endpoint))
       else
-        raise "#{endpoint.path} not permitted by access mask"
+        raise EveBadger::APIKeyError, "#{endpoint.path} not permitted by access mask"
       end
     end
 
@@ -108,9 +108,9 @@ module EveBadger
     end
 
     def fetch_key_info
-      info = account(:api_key_info).as_json
-      @access_mask = info['result']['key']['@accessMask'].to_i
-      @key_type = info['result']['key']['@type'].to_sym
+      info = account(:api_key_info).result_as_json
+      @access_mask = info['key']['@accessMask'].to_i
+      @key_type = info['key']['@type'].to_sym
     end
 
     def build_uri(endpoint)
@@ -123,7 +123,6 @@ module EveBadger
 
     def get_response(uri)
       response = cache_get(uri) || http_get(uri)
-      raise_for_api_errors! response
       EveBadger::Response.new(response)
     end
 
@@ -159,12 +158,9 @@ module EveBadger
       seconds_until_expire = Time.parse(noko.xpath('//cachedUntil').text)
       seconds_until_expire.to_i - Time.now.to_i
     end
+  end
 
-    def raise_for_api_errors!(response)
-      noko = Nokogiri::XML(response)
-      if noko.xpath('//error').any?
-        raise "#{noko.xpath('//error').first}"
-      end
-    end
+  # Exception to raise when an EveAPI object needs attributes which are missing or invalid.
+  class APIKeyError < StandardError
   end
 end

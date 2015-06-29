@@ -15,49 +15,66 @@ I wrote this for 3 reasons:
 ## What does it do?
 
 * Obeys CCP's default request rate limit (can be disabled if you have an exception)
-* Caches responses until their respective cachedUntil timestamps (can be disabled if you prefer your own method)
-* Respects access masks for keys and endpoints (it will raise an exception if you try to access an endpoint that isn't allowed by the keys access mask)
-* Probably annoys OO purists
+* Uses Moneta to cache responses with whatever supported backend you prefer. (Disabled by default.)
+* Automatically fetches missing access_mask and key_type values from the API Key Info endpoint.
+* Respects access masks for keys and endpoints (it will raise an exception instead of making an HTTP request if you try to access an endpoint that isn't allowed by the key's access mask)
+* Probably annoys OO purists a little.
 
 ## What doesn't it do?
 
-* EveBadger won't wrap each response inside a nice endpoint specific object, it just gives you the JSON.
-* Doesn't cover the entire EveAPI (just Account, Character and Corporation endpoints this will improve in time)
-* It doesn't install from rubygems yet, because I haven't published it (but you can add a git entry to your Gemfile if you want to use it before I do)
+* EveBadger won't wrap each response inside a nice endpoint specific object, it just gives you the JSON or XML and can truncate the response to the <result> section if you prefer.
 
 ## Planned Improvements
 
 * **Full API Coverage** Right now EveBadger covers the stuff I use the most. Eventually I'll go through and add all the remaining endpoints.
 * **Rowset Extraction** *(Maybe)* I'm happy with JSON responses for the most part. I don't want or need a full object for every endpoint, but a single basic response object which does a nice job of extracting rowsets and delegating indexes might be nice.
 
-## Usage Examples
+## Basic Usage
 
-The basic idea is to make an EveAPI object and call the appropriate category method with the symbol representing the name of the endpoint. It'll spit back JSON and you take it from there.
+The basic idea is to make an EveAPI object and call the appropriate category method with the symbol representing the name of the endpoint. It'll spit back a response object you can take JSON or XML from and use however you want.
 
 I think you'll find that the category methods and endpoint names map directly to the EveAPI documentation at [this location](https://neweden-dev.com/API).
+
+
+### Getting Key Info as JSON
+```ruby
+api = EveBadger::EveAPI.new(key_id: my_key_id, vcode: my_vcode)
+response = api.account(:api_key_info).as_json
+```
+
+### Getting Key Info as XML
+```ruby
+api = EveBadger::EveAPI.new(key_id: my_key_id, vcode: my_vcode)
+response = api.account(:api_key_info).as_xml
+document = MyFavoriteXMLParser.new(response)
+```
+
+## More Examples
+
+You'll notice that these examples all use `.result_as_json` and `.result_as_xml`. Instead of `.as_json` or `.as_xml`. This isn't a typo. The response object allows you to take the whole response as JSON/XML or only the contents enclosed in `<result></result>` tags.
+
+The full responses from `.as_*` are good if you need the timestamp data for your own uses.
+
+The truncated responses from `.result_as_*` are nice if you don't need the extra stuff and just want to skip the `<eveapi>`  and `<result>` nodes.
 
 ### Getting a Character List
 ```ruby
 api = EveBadger::EveAPI.new(key_id: my_key_id, vcode: my_vcode)
-response = api.account(:list_of_characters)
+response = api.account(:list_of_characters).result_as_json
 response['rowset']['row'].each do |row|
   puts row['@name']
 end
 ```
 
-### Getting Key Info
-```ruby
-api = EveBadger::EveAPI.new(key_id: my_key_id, vcode: my_vcode)
-response = api.account(:api_key_info)
-puts response['key']['@accessMask']
-puts response['key']['@type']
-```
-
 ### Getting a Tower List
 ```ruby
-# corporation endpoints expect you to also pass the character_id for the character on the key
-api = EveBadger::EveAPI.new(key_id: my_key_id, vcode: my_vcode, character_id: my_character_id)
-response = api.corporation(:starbase_list)
+# Corporation endpoints expect you to also pass
+# the character_id for the character on the key.
+api = EveBadger::EveAPI.new
+api.key_id = my_key_id
+api.vcode = my_vcode
+api.character_id = my_character_id
+response = api.corporation(:starbase_list).result_as_json
 response['rowset']['row'].each |starbase|
   puts starbase['@state']
 end
@@ -65,20 +82,36 @@ end
 
 ### Getting the Details of a Specific Object
 ```ruby
-api = EveBadger::EveAPI.new(key_id: my_key_id, vcode: my_vcode, character_id: my_character_id)
-# Detail endpoints are the only exception to the category/endpoint pattern
-# Any endpoint that pulls the details of a particular thing is accessed via the details method
-# Simply pass the extra argument for id_of_interest
-response = api.details(:starbase_detail, my_id_of_interest)  
+# Detail endpoints are the only exception to the category/endpoint pattern.
+# Any endpoint that pulls the details of a particular thing is accessed via
+# the details method by passing an extra argument for id_of_interest.
+api = EveBadger::EveAPI.new
+api.key_id = my_key_id
+api.vcode = my_vcode
+api.character_id my_character_id
+response = api.details(:starbase_detail, my_id_of_interest).result_as_json  
 response['rowset']['row'].each |fuel_row|
   puts "#{fuel_row['@typeID']} - #{fuel_row['@quantity']}"
 end
 ```
 
-### Creating an Object for a Test Server API
+### Creating an Object for the Test Server API
 ```ruby
-api = EveBadger::EveAPI.new(server: :sisi, key_id: my_key_id, vcode: my_vcode, character_id: my_character_id)
-# then ontinue as normal
+api = EveBadger::EveAPI.new(server: :sisi)
+api.key_id = my_key_id
+api.vcode = my_vcode
+api.character_id = my_character_id)
+# then continue as normal
+```
+
+### Enable Request Caching
+```ruby
+# EveBadger::Cache.enable! takes the same arguments as Moneta.new
+# See Moneta API docs for possible configurations:
+# http://www.rubydoc.info/gems/moneta/frames
+# Note: EveBadger will automatically merge in {expires: true} if the
+# chosen adapter doesn't support expiration natively.
+EveBadger::Cache.enable!(:Redis)
 ```
 
 ### Tips for Edge Cases
