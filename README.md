@@ -100,7 +100,7 @@ end
 api = EveBadger::EveAPI.new(server: :sisi)
 api.key_id = my_key_id
 api.vcode = my_vcode
-api.character_id = my_character_id)
+api.character_id = my_character_id
 # then continue as normal
 ```
 
