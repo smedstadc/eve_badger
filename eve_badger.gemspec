@@ -1,6 +1,6 @@
 Gem::Specification.new do |gemspec|
   gemspec.name = 'eve_badger'
-  gemspec.version = File.read('VERSION')
+  gemspec.version = File.read('VERSION').chomp
   gemspec.summary = 'A gem for interacting with the Eve: Online API.'
   gemspec.description = "Easily get XML or JSON from the Eve: Online API with optional caching and throttling."
   gemspec.authors = 'Corey Smedstad'
