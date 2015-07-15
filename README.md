@@ -14,7 +14,7 @@ I wrote this for 3 reasons:
 
 ## What does it do?
 
-* Obeys CCP's default request rate limit (can be disabled if you have an exception)
+* Can throttle the request rate so you don't hit CCP's default rate limit. (Disabled by default.)
 * Uses Moneta to cache responses with whatever supported backend you prefer. (Disabled by default.)
 * Automatically fetches missing access_mask and key_type values from the API Key Info endpoint.
 * Respects access masks for keys and endpoints (it will raise an exception instead of making an HTTP request if you try to access an endpoint that isn't allowed by the key's access mask)
@@ -104,14 +104,37 @@ api.character_id = my_character_id
 # then continue as normal
 ```
 
-### Enable Request Caching
+### Request Caching
 ```ruby
-# EveBadger::Cache.enable! takes the same arguments as Moneta.new
+# EveBadger::Cache.enable takes the same arguments as Moneta.new
 # See Moneta API docs for possible configurations:
 # http://www.rubydoc.info/gems/moneta/frames
-# Note: EveBadger will automatically merge in {expires: true} if the
+#
+# EveBadger will automatically merge in {expires: true} if the
 # chosen adapter doesn't support expiration natively.
-EveBadger::Cache.enable!(:Redis)
+#
+# Caching is handled automatically while a cache adapter is enabled.
+EveBadger::Cache.enable(:Redis)
+
+# You can also disable an enabled cache if you want to for some reason
+# just keep in mind that all your cached data will go poof if you use
+# an the :Memory adapter.
+EveBadger::Cache.disable
+```
+
+### Request Throttling
+```ruby
+# EveBadger::Thottle.enable_default will set CCPs default rate
+# limit of 30 requests per minute.
+EveBadger::Throttle.enable_default
+
+# Use EveBadger::Throttle.enable_custom to set a custom limit if
+# you have arranged for an exception for your app.
+requests_per_minute = 100
+EveBadger::Throttle.enable_custom(requests_per_minute)
+
+# Like caching, you may disable a previously enabled throttle.
+EveBadger::Throttle.disable
 ```
 
 ### Tips for Edge Cases

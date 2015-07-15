@@ -1,10 +1,6 @@
 require 'nokogiri'
 require 'time'
 require 'open-uri'
-require 'eve_badger'
-require 'eve_badger/endpoints'
-require 'eve_badger/response'
-require 'eve_badger/cache'
 require 'digest/sha1'
 
 module EveBadger
@@ -13,11 +9,7 @@ module EveBadger
     attr_reader :key_id, :vcode, :character_id, :domain
 
     def initialize(args={})
-      if args[:server] == :sisi
-        @domain = EveBadger.sisi_domain
-      else
-        @domain = EveBadger.tq_domain
-      end
+      @domain = args[:sisi] ? EveBadger.default_sisi_domain : EveBadger.default_tq_domain
       @user_agent = EveBadger.default_user_agent
       @key_id = args[:key_id].to_s if args[:key_id]
       @vcode = args[:vcode].to_s if args[:vcode]
@@ -148,7 +140,7 @@ module EveBadger
       end
     end
 
-    # Hash URI's before use as a cache key so that API key/vcode combinations don't leak from the cache monitor or logs.
+    # Hash URI's before use as a cache key so that API key/vcode combinations don't into log files of dependencies.
     def hash_of(uri)
       Digest::SHA1.hexdigest(uri)
     end

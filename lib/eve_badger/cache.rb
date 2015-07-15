@@ -2,7 +2,7 @@ require 'moneta'
 require 'digest/sha1'
 
 module EveBadger
-  # A wrapper around a Moneta object that provides automatic request caching for Evebadger::EveAPI when enabled.
+  # A wrapper around a Moneta object that provides automatic request caching for Evebadger::EveAPI while enabled.
   module Cache
     # Cache is disabled by default
     @cache = nil
@@ -11,15 +11,14 @@ module EveBadger
 
     # Enable the cache with a specified Moneta adapter.
     # See Moneta API documentation for possible configurations: http://www.rubydoc.info/gems/moneta/frames
-    def self.enable!(*args, **kwargs)
+    def self.enable(*args, **kwargs)
       unless @native_expires.any? { |name| args.include?(name) }
-      # unless false
         kwargs.merge!({expires: true})
       end
       @cache = Moneta.new(*args, **kwargs)
     end
 
-    def self.disable!
+    def self.disable
       @cache = nil
     end
 

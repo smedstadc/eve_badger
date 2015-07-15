@@ -1,5 +1,4 @@
-require 'spec_helper'
-require 'eve_badger/eve_api'
+require 'test_helper'
 
 describe EveBadger::EveAPI do
   let(:keyID) { '2641361' }

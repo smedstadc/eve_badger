@@ -28,12 +28,9 @@ module EveBadger
       Badgerfish::Parser.new.load(@content)['eveapi']['result']
     end
 
-    # raise an exception if the response contains an Eve API error
-    def raise_for_api_errors!(response)
-      document = Nokogiri::XML(response)
-      if document.xpath('//error').any?
-        raise EveBadger::CCPPleaseError, "#{document.xpath('//error').first}"
-      end
+    def api_errors
+      document = Nokogiri::XML(@content)
+      document.xpath('//error')
     end
   end
 

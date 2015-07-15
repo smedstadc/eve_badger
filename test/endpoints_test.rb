@@ -1,5 +1,4 @@
-require 'spec_helper'
-require 'eve_badger/endpoints'
+require 'test_helper'
 
 describe EveBadger::Endpoints do
   describe "endpoint retrieval" do

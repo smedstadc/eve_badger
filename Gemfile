@@ -7,5 +7,5 @@ gem 'moneta'
 
 group :development, :test do
   gem 'minitest'
-  gem 'minitest-reporters'
+  gem 'load_path'
 end

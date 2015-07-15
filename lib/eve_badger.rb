@@ -1,5 +1,8 @@
-require 'slowweb'
 require 'eve_badger/eve_api'
+require 'eve_badger/endpoints'
+require 'eve_badger/response'
+require 'eve_badger/cache'
+require 'eve_badger/throttle'
 
 module EveBadger
   def self.version
@@ -10,30 +13,11 @@ module EveBadger
     "EveBadger-#{EveBadger.version}/Ruby-#{RUBY_VERSION}"
   end
 
-  def self.tq_domain
+  def self.default_tq_domain
     'https://api.eveonline.com/'
   end
 
-  def self.sisi_domain
+  def self.default_sisi_domain
     'https://api.testeveonline.com/'
-  end
-
-  # According to CCP the default limit for API access is 30 requests per minute.
-  SlowWeb.limit(tq_domain, 30, 60)
-  SlowWeb.limit(sisi_domain, 30, 60)
-
-  def self.disable_throttling
-    SlowWeb.reset
-  end
-
-  def self.enable_default_throttling
-    SlowWeb.limit(tq_domain, 30, 60)
-    SlowWeb.limit(sisi_domain, 30, 60)
-  end
-
-  def self.enable_custom_throttling(requests_per_minute)
-    SlowWeb.reset
-    SlowWeb.limit(tq_domain, requests_per_minute, 60)
-    SlowWeb.limit(sisi_domain, requests_per_minute, 60)
   end
 end

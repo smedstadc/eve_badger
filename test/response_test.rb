@@ -1,5 +1,4 @@
-require 'spec_helper'
-require 'eve_badger/response'
+require 'test_helper'
 
 describe EveBadger::Response do
   let(:content) { "<?xml version='1.0' encoding='UTF-8'?>
@@ -7,6 +6,7 @@ describe EveBadger::Response do
                      <currentTime>2015-06-23 21:52:05</currentTime>
                      <result>
                        <name>Eve Badger</name>
+                       <error>Error Message</error>
                      </result>
                      <cachedUntil>2015-06-23 22:36:37</cachedUntil>
                    </eveapi>" }
@@ -35,10 +35,14 @@ describe EveBadger::Response do
   end
 
   it "returns only the result as xml" do
-    response.result_as_xml.must_equal "<name>Eve Badger</name>"
+    response.result_as_xml.must_equal "<name>Eve Badger</name><error>Error Message</error>"
   end
 
   it "returns only the result as json" do
-    response.result_as_json.must_equal({'name' => {'$' => 'Eve Badger'}})
+    response.result_as_json.must_equal({'name' => {'$' => 'Eve Badger'}, "error"=>{"$"=>"Error Message"}})
+  end
+
+  it "returns api errors from document" do
+    response.api_errors.any?.must_equal true
   end
 end
