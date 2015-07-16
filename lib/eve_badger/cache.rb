@@ -18,18 +18,22 @@ module EveBadger
       @cache = Moneta.new(*args, **kwargs)
     end
 
+    # disable request caching
     def self.disable
       @cache = nil
     end
 
+    # test whether request caching is enabled
     def self.enabled?
       @cache ? true : false
     end
 
+    # return the class type of the enabled cache, caches adapters which don't natively support expiration will all appear as Moneta::Expires
     def self.type
       @cache.class
     end
 
+    # store a value in the cache if it is enabled
     def self.store(key, value, options={})
       if @cache
         @cache.store(key, value, options)
@@ -38,6 +42,7 @@ module EveBadger
       end
     end
 
+    # retrieve a value from the cache it if is enabled
     def self.get(key)
       if @cache
         @cache[key]
