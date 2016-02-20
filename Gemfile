@@ -7,5 +7,4 @@ gem 'moneta'
 
 group :development, :test do
   gem 'minitest'
-  gem 'load_path'
 end

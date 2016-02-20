@@ -1,8 +1,4 @@
-require 'load_path'
-
-LoadPath.configure do
-  add sibling_directory 'lib'
-end
+$LOAD_PATH.unshift( File.expand_path '../lib' )
 
 require 'minitest/spec'
 require 'minitest/autorun'
