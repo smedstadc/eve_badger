@@ -11,23 +11,23 @@ module EveBadger
     end
 
     def self.user_agent= value
-      @user_agent = value
+      @user_agent = value.to_s
     end
 
     def self.tranquility_domain
-      @tranquility_domain ||= 'https://api.eveonline.com/'
+      @tranquility_domain ||= URI('https://api.eveonline.com/')
     end
 
     def self.tranquility_domain= value
-      @tranquility_domain = value
+      @tranquility_domain = URI(value)
     end
 
     def self.singularity_domain
-      @singularity_domain ||= 'https://api.testeveonline.com/'
+      @singularity_domain ||= URI('https://api.testeveonline.com/')
     end
 
     def self.singularity_domain= value
-      @singularity_domain = value
+      @singularity_domain = URI(value)
     end
   end
 end
