@@ -6,18 +6,28 @@ require 'eve_badger/cache'
 
 module EveBadger
   module Config
-    def self.default_user_agent
-      "EveBadger-#{EveBadger.version}/Ruby-#{RUBY_VERSION}"
+    def self.user_agent
+      @user_agent ||= "EveBadger-#{EveBadger.version}/Ruby-#{RUBY_VERSION}"
     end
 
-    # provides the default domain for the tranquility (live game server) api
-    def self.default_tq_domain
-      'https://api.eveonline.com/'
+    def self.user_agent= value
+      @user_agent = value
     end
 
-    # provides the default domain for the singularity (public test server, nicknamed "sisi") api
-    def self.default_sisi_domain
-      'https://api.testeveonline.com/'
+    def self.tranquility_domain
+      @tranquility_domain ||= 'https://api.eveonline.com/'
+    end
+
+    def self.tranquility_domain= value
+      @tranquility_domain = value
+    end
+
+    def self.singularity_domain
+      @singularity_domain ||= 'https://api.testeveonline.com/'
+    end
+
+    def self.singularity_domain= value
+      @singularity_domain = value
     end
   end
 end

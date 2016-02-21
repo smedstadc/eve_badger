@@ -9,8 +9,8 @@ module EveBadger
     attr_reader :key_id, :vcode, :character_id, :domain
 
     def initialize(args={})
-      @domain = args[:sisi] ? EveBadger::Config.default_sisi_domain : EveBadger::Config.default_tq_domain
-      @user_agent = EveBadger::Config.default_user_agent
+      @domain = args[:sisi] ? EveBadger::Config.singularity_domain : EveBadger::Config.tranquility_domain
+      @user_agent = EveBadger::Config.user_agent
       @key_id = args[:key_id].to_s if args[:key_id]
       @vcode = args[:vcode].to_s if args[:vcode]
       @character_id = args[:character_id].to_s if args[:character_id]
