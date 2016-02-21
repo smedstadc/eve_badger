@@ -1,4 +1,4 @@
-require 'json'
+require 'yaml'
 
 module EveBadger
   class Endpoint
@@ -20,24 +20,16 @@ module EveBadger
   # loads endpoint data from JSON files packaged with the gem, these JSON files are easily edited if API endpoints are added or changed in the future
   module Endpoints
     # load account endpoint data
-    open(File.join(File.dirname(__FILE__), 'json', 'account_endpoints.json'), 'r') do |file|
-      @account_endpoints = JSON.parse(file.read.to_s, :symbolize_names => true)
-    end
+    @account_endpoints = YAML.load_file(File.join(File.dirname(__FILE__), 'yaml', 'account_endpoints.yml'))
 
     # load character endpoint data
-    open(File.join(File.dirname(__FILE__), 'json', 'character_endpoints.json'), 'r') do |file|
-      @character_endpoints = JSON.parse(file.read.to_s, :symbolize_names => true)
-    end
+    @character_endpoints = YAML.load_file(File.join(File.dirname(__FILE__), 'yaml', 'character_endpoints.yml'))
 
     # load corporation endpoint data
-    open(File.join(File.dirname(__FILE__), 'json', 'corporation_endpoints.json'), 'r') do |file|
-      @corporation_endpoints = JSON.parse(file.read.to_s, :symbolize_names => true)
-    end
+    @corporation_endpoints = YAML.load_file(File.join(File.dirname(__FILE__), 'yaml', 'corporation_endpoints.yml'))
 
     # load detail endpoint data
-    open(File.join(File.dirname(__FILE__), 'json', 'detail_endpoints.json'), 'r') do |file|
-      @detail_endpoints = JSON.parse(file.read.to_s, :symbolize_names => true)
-    end
+    @detail_endpoints = YAML.load_file(File.join(File.dirname(__FILE__), 'yaml', 'detail_endpoints.yml'))
 
     # takes an account endpoint name and returns an endpoint data object
     def self.account(endpoint)

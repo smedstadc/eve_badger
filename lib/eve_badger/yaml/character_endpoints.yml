@@ -1,0 +1,97 @@
+---
+:account_balance:
+  :path: Char/AccountBalance
+  :access_mask: 1
+:asset_list:
+  :path: Char/AssetList
+  :access_mask: 2
+:blueprints:
+  :path: Char/Blueprints
+  :access_mask: 2
+:calendar_event_attendees:
+  :path: Char/CalendarEventAttendees
+  :access_mask: 4
+:character_sheet:
+  :path: Char/CharacterSheet
+  :access_mask: 8
+:contact_list:
+  :path: Char/ContactList
+  :access_mask: 16
+:contact_notifications:
+  :path: Char/ContactNotifications
+  :access_mask: 32
+:contracts:
+  :path: Char/Contracts
+  :access_mask: 67108864
+:contract_bids:
+  :path: Char/ContractBids
+  :access_mask: 67108864
+:factional_warfare_stats:
+  :path: Char/FacWarStats
+  :access_mask: 64
+:industry_jobs:
+  :path: Char/IndustryJobs
+  :access_mask: 128
+:industry_jobs_history:
+  :path: Char/IndustryJobsHistory
+  :access_mask: 128
+:kill_mails:
+  :path: Char/KillMails
+  :access_mask: 256
+:locations:
+  :path: Char/Locations
+  :access_mask: 134217728
+:mail_bodies:
+  :path: Char/MailBodies
+  :access_mask: 512
+:mailing_lists:
+  :path: Char/MailingLists
+  :access_mask: 1024
+:mail_messages:
+  :path: Char/MailMessages
+  :access_mask: 2048
+:market_orders:
+  :path: Char/MarketOrders
+  :access_mask: 4096
+:medals:
+  :path: Char/Medals
+  :access_mask: 8192
+:notifications:
+  :path: Char/Notifications
+  :access_mask: 16384
+:notification_texts:
+  :path: Char/NotificationsTexts
+  :access_mask: 32768
+:planetary_colonies:
+  :path: Char/PlanetaryColonies
+  :access_mask: 2
+:planetary_pins:
+  :path: Char/PlanetaryPins
+  :access_mask: 2
+:planetary_routes:
+  :path: Char/PlanetaryRoutes
+  :access_mask: 2
+:planetary_links:
+  :path: Char/PlanetaryLinks
+  :access_mask: 2
+:research:
+  :path: Char/Research
+  :access_mask: 65536
+:skill_in_training:
+  :path: Char/SkillInTraining
+  :access_mask: 131072
+:skill_queue:
+  :path: Char/SkillQueue
+  :access_mask: 262144
+:npc_standings:
+  :path: Char/Standings
+  :access_mask: 524288
+:upcoming_calendar_events:
+  :path: Char/UpcomingCalendarEvents
+  :access_mask: 1048576
+:wallet_journal:
+  :path: Char/WalletJournal
+  :access_mask: 2097152
+:wallet_transactions:
+  :path: Char/WalletTransactions
+  :access_mask: 4194304

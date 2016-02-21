@@ -5,12 +5,12 @@ require 'digest/sha1'
 
 module EveBadger
   class EveAPI
-    attr_accessor :user_agent
+    attr_accessor :user_agents
     attr_reader :key_id, :vcode, :character_id, :domain
 
     def initialize(args={})
-      @domain = args[:sisi] ? EveBadger.default_sisi_domain : EveBadger.default_tq_domain
-      @user_agent = EveBadger.default_user_agent
+      @domain = args[:sisi] ? EveBadger::Config.default_sisi_domain : EveBadger::Config.default_tq_domain
+      @user_agent = EveBadger::Config.default_user_agent
       @key_id = args[:key_id].to_s if args[:key_id]
       @vcode = args[:vcode].to_s if args[:vcode]
       @character_id = args[:character_id].to_s if args[:character_id]
@@ -161,7 +161,7 @@ module EveBadger
       end
     end
 
-    # Hash URI's before use as a cache key so that API key/vcode combinations don't into log files of dependencies.
+    # Hash URI's before use as a cache key so that API key/vcode combinations don't leak into log files
     def hash_of(uri)
       Digest::SHA1.hexdigest(uri)
     end
