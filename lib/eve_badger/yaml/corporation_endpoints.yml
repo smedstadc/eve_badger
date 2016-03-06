@@ -1,82 +1,82 @@
 ---
 :account_balance:
-  :path: Corp/AccountBalance
+  :path: /Corp/AccountBalance
   :access_mask: 1
 :asset_list:
-  :path: Corp/AssetList
+  :path: /Corp/AssetList
   :access_mask: 2
 :blueprints:
-  :path: Corp/Blueprints
+  :path: /Corp/Blueprints
   :access_mask: 2
 :contact_list:
-  :path: Corp/ContactList
+  :path: /Corp/ContactList
   :access_mask: 16
 :container_log:
-  :path: Corp/ContainerLog
+  :path: /Corp/ContainerLog
   :access_mask: 32
 :contracts:
-  :path: Corp/Contracts
+  :path: /Corp/Contracts
   :access_mask: 8388608
 :contract_bids:
-  :path: Corp/ContractBids
+  :path: /Corp/ContractBids
   :access_mask: 8388608
 :corporation_sheet:
-  :path: Corp/CorporationSheet
+  :path: /Corp/CorporationSheet
   :access_mask: 8
 :customs_offices:
-  :path: Corp/CustomsOffices
+  :path: /Corp/CustomsOffices
   :access_mask: 2
 :facilities:
-  :path: Corp/Facilities
+  :path: /Corp/Facilities
   :access_mask: 128
 :factional_warfare_stats:
-  :path: Corp/FacWarStats
+  :path: /Corp/FacWarStats
   :access_mask: 64
 :industry_jobs:
-  :path: Corp/IndustryJobs
+  :path: /Corp/IndustryJobs
   :access_mask: 128
 :industry_jobs_history:
-  :path: Corp/IndustryJobsHistory
+  :path: /Corp/IndustryJobsHistory
   :access_mask: 128
 :kill_mails:
-  :path: Corp/KillMails
+  :path: /Corp/KillMails
   :access_mask: 256
 :locations:
-  :path: Corp/Locations
+  :path: /Corp/Locations
   :access_mask: 16777216
 :market_orders:
-  :path: Corp/MarketOrders
+  :path: /Corp/MarketOrders
   :access_mask: 4096
 :medals:
-  :path: Corp/Medals
+  :path: /Corp/Medals
   :access_mask: 8192
 :member_medals:
-  :path: Corp/MemberMedals
+  :path: /Corp/MemberMedals
   :access_mask: 4
 :member_security:
-  :path: Corp/MemberSecurity
+  :path: /Corp/MemberSecurity
   :access_mask: 512
 :member_security_log:
-  :path: Corp/MemberSecurityLog
+  :path: /Corp/MemberSecurityLog
   :access_mask: 1024
 :member_tracking:
-  :path: Corp/MemberTracking
+  :path: /Corp/MemberTracking
   :access_mask: 2048
 :outpost_list:
-  :path: Corp/OutpostList
+  :path: /Corp/OutpostList
   :access_mask: 16384
 :shareholders:
-  :path: Corp/Shareholders
+  :path: /Corp/Shareholders
   :access_mask: 65536
 :standings:
-  :path: Corp/Standings
+  :path: /Corp/Standings
   :access_mask: 262144
 :starbase_list:
-  :path: Corp/StarbaseList
+  :path: /Corp/StarbaseList
   :access_mask: 524288
 :titles:
-  :path: Corp/Titles
+  :path: /Corp/Titles
   :access_mask: 4194304
 :wallet_transactions:
-  :path: Corp/WalletTransactions
+  :path: /Corp/WalletTransactions
   :access_mask: 2097152

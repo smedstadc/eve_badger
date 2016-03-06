@@ -122,12 +122,22 @@ module EveBadger
 
     # builds a uri string for a given endpoint
     def build_uri(endpoint)
-      "#{@domain}#{endpoint.path}.xml.aspx#{params}"
+      uri = URI(@domain)
+      uri.path = "#{endpoint.path}.xml.aspx"
+      uri.query = params
+      uri
     end
 
     # builds the default params string for most requests
+
+    def base_params
+      params_hash = {'keyID' => @key_id, 'vCode' => @vcode}
+      params_hash.merge!('characterID' => @character_id) if @character_id
+      params_hash
+    end
+
     def params
-      "?keyID=#{@key_id}&vCode=#{@vcode}#{"&characterID=#{@character_id}" if @character_id}"
+      URI.encode_www_form base_params
     end
 
     # attempts to get a http response from the request cache first, then makes an http request if not found
@@ -146,7 +156,7 @@ module EveBadger
     # get a uri via http
     def http_get(uri)
       begin
-        response = open(uri) { |res| res.read }
+        response = open(uri, "User-Agent" => @user_agent) { |res| res.read }
       rescue OpenURI::HTTPError => error
         response = error.io.string
       end
@@ -163,7 +173,7 @@ module EveBadger
 
     # Hash URI's before use as a cache key so that API key/vcode combinations don't leak into log files
     def hash_of(uri)
-      Digest::SHA1.hexdigest(uri)
+      Digest::SHA1.hexdigest(uri.to_s)
     end
 
     # returns the number of seconds until the cachedUntil value in the xml response from the the API

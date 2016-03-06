@@ -40,7 +40,7 @@ describe EveBadger::Endpoints do
     let(:zero_bitmask) { 0 }
 
     it "gets path" do
-      EveBadger::Endpoints.account(:account_status).path.must_equal "Account/AccountStatus"
+      EveBadger::Endpoints.account(:account_status).path.must_equal "/Account/AccountStatus"
     end
 
     it "gets access_mask" do

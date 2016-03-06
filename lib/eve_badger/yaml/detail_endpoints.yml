@@ -1,29 +1,29 @@
 ---
 :char_contract:
-  :path: Char/Contracts
+  :path: /Char/Contracts
   :access_mask: 67108864
   :detail_id: contractID
 :char_contract_items:
-  :path: Char/ContractItems
+  :path: /Char/ContractItems
   :access_mask: 67108864
   :detail_id: contractID
 :corp_contract:
-  :path: Corp/Contracts
+  :path: /Corp/Contracts
   :access_mask: 8388608
   :detail_id: contractID
 :corp_contract_items:
-  :path: Corp/ContractItems
+  :path: /Corp/ContractItems
   :access_mask: 8388608
   :detail_id: contractID
 :wallet_journal:
-  :path: Corp/WalletJournal
+  :path: /Corp/WalletJournal
   :access_mask: 1048576
   :detail_id: accountKey
 :outpost_service:
-  :path: Corp/OutpostServiceDetail
+  :path: /Corp/OutpostServiceDetail
   :access_mask: 32768
   :detail_id: itemID
 :starbase:
-  :path: Corp/StarbaseDetail
+  :path: /Corp/StarbaseDetail
   :access_mask: 131072
   :detail_id: itemID
