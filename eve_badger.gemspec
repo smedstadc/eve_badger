@@ -9,8 +9,8 @@ Gem::Specification.new do |gemspec|
   gemspec.license = 'MIT'
   gemspec.files = Dir['lib/**/*.*'] + Dir['VERSION'] + Dir['LICENSE'] + Dir['README.md']
   gemspec.required_ruby_version = '>= 1.9.3'
-  gemspec.add_runtime_dependency 'nokogiri', '~> 1.6'
-  gemspec.add_runtime_dependency 'badgerfish', '~> 0.2.0'
+  gemspec.add_runtime_dependency 'nokogiri', '~> 1.8'
+  gemspec.add_runtime_dependency 'badgerfish', '~> 0.2'
   gemspec.add_runtime_dependency 'slowweb', '~> 0.1.1'
   gemspec.add_runtime_dependency 'moneta', '~> 0.8.0'
   gemspec.add_development_dependency 'minitest', '~> 5.7'
